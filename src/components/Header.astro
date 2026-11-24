@@ -1,0 +1,40 @@
+---
+import { primaryNavigation } from "../data/navigation";
+import { site } from "../data/site";
+
+const currentPath = Astro.url.pathname;
+---
+
+<header class="site-header" data-site-header>
+  <div class="container-shell header-inner">
+    <a class="wordmark" href="/" aria-label={`${site.name} home`}>
+      <span>{site.name}</span>
+      <small>Christian Reformed Church · {site.location}</small>
+    </a>
+
+    <button class="menu-button" type="button" aria-expanded="false" aria-controls="primary-navigation" data-menu-toggle>
+      <span class="sr-only">Open navigation</span>
+      <span aria-hidden="true">Menu</span>
+    </button>
+
+    <nav id="primary-navigation" class="primary-navigation" aria-label="Primary navigation" data-primary-navigation>
+      {primaryNavigation.map((item) => (
+        <a href={item.href} aria-current={currentPath.startsWith(item.href) ? "page" : undefined}>
+          {item.label}
+        </a>
+      ))}
+      <a class="nav-action" href="/visit/">Plan a visit</a>
+    </nav>
+  </div>
+</header>
+
+<script>
+  const toggle = document.querySelector<HTMLButtonElement>("[data-menu-toggle]");
+  const navigation = document.querySelector<HTMLElement>("[data-primary-navigation]");
+
+  toggle?.addEventListener("click", () => {
+    const open = toggle.getAttribute("aria-expanded") === "true";
+    toggle.setAttribute("aria-expanded", String(!open));
+    navigation?.toggleAttribute("data-open", !open);
+  });
+</script>

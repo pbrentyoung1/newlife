@@ -1,0 +1,4 @@
+User-agent: *
+Disallow: /
+
+# Prelaunch site. Replace with an allow-all policy only after launch approval.

@@ -1,0 +1,88 @@
+---
+import { heroGallery } from "../data/heroGallery";
+
+const initialTheme = heroGallery.themes.find((theme) => theme.id === heroGallery.defaultTheme) ?? heroGallery.themes[0];
+---
+
+<div class="hero-mosaic" data-hero-mosaic data-interval={heroGallery.intervalMs}>
+  <div class="mosaic-heading">
+    <p class="handwritten" data-theme-label>{initialTheme.label}</p>
+    <p class="mosaic-description" data-theme-description>{initialTheme.description}</p>
+  </div>
+
+  <div class="mosaic-grid" data-theme-accent={initialTheme.accent} aria-live="off">
+    {initialTheme.imageLabels.map((label, index) => (
+      <figure class={`mosaic-tile mosaic-tile-${index + 1}`} data-mosaic-tile>
+        <div class="mosaic-placeholder" role="img" aria-label={`${label} photography placeholder`}>
+          <span>{label}</span>
+        </div>
+      </figure>
+    ))}
+  </div>
+
+  <div class="mosaic-controls" aria-label="Hero themes">
+    {heroGallery.themes.map((theme, index) => (
+      <button
+        type="button"
+        class="mosaic-dot"
+        aria-label={`Show ${theme.label}`}
+        aria-pressed={index === 0 ? "true" : "false"}
+        data-theme-index={index}
+      />
+    ))}
+  </div>
+</div>
+
+<script define:vars={{ themes: heroGallery.themes }}>
+  const root = document.querySelector("[data-hero-mosaic]");
+  const label = root?.querySelector("[data-theme-label]");
+  const description = root?.querySelector("[data-theme-description]");
+  const grid = root?.querySelector(".mosaic-grid");
+  const tiles = root?.querySelectorAll("[data-mosaic-tile] .mosaic-placeholder");
+  const controls = root?.querySelectorAll("[data-theme-index]");
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  let activeIndex = 0;
+  let timer;
+
+  const render = (index) => {
+    const theme = themes[index];
+    if (!theme || !root) return;
+
+    root.setAttribute("data-changing", "");
+    window.setTimeout(() => {
+      if (label) label.textContent = theme.label;
+      if (description) description.textContent = theme.description;
+      if (grid) grid.setAttribute("data-theme-accent", theme.accent);
+      tiles?.forEach((tile, tileIndex) => {
+        const text = theme.imageLabels[tileIndex];
+        const textNode = tile.querySelector("span");
+        if (textNode) textNode.textContent = text;
+        tile.setAttribute("aria-label", `${text} photography placeholder`);
+      });
+      controls?.forEach((control, controlIndex) => {
+        control.setAttribute("aria-pressed", String(controlIndex === index));
+      });
+      activeIndex = index;
+      root.removeAttribute("data-changing");
+    }, reducedMotion.matches ? 0 : 240);
+  };
+
+  const stop = () => window.clearInterval(timer);
+  const start = () => {
+    stop();
+    if (reducedMotion.matches || document.hidden) return;
+    const interval = Number(root?.getAttribute("data-interval")) || 6500;
+    timer = window.setInterval(() => render((activeIndex + 1) % themes.length), interval);
+  };
+
+  controls?.forEach((control) => {
+    control.addEventListener("click", () => {
+      render(Number(control.getAttribute("data-theme-index")));
+      start();
+    });
+  });
+
+  document.addEventListener("visibilitychange", start);
+  reducedMotion.addEventListener("change", start);
+  start();
+</script>

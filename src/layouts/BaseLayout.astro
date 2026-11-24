@@ -1,0 +1,47 @@
+---
+import Footer from "../components/Footer.astro";
+import Header from "../components/Header.astro";
+import { designTokenStyle } from "../data/designSystem";
+import { site } from "../data/site";
+import "../styles/global.css";
+
+interface Props {
+  title?: string;
+  description?: string;
+  noIndex?: boolean;
+}
+
+const {
+  title = site.fullName,
+  description = site.description,
+  noIndex = true,
+} = Astro.props;
+const canonical = new URL(Astro.url.pathname, site.url);
+const pageTitle = title === site.fullName ? title : `${title} | ${site.name}`;
+---
+
+<!doctype html>
+<html lang="en" style={designTokenStyle}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    {noIndex && <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex" />}
+    {noIndex && <meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet, noimageindex" />}
+    <link rel="canonical" href={canonical} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
+    <title>{pageTitle}</title>
+  </head>
+  <body>
+    <Header />
+    <main id="main-content">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

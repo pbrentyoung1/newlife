@@ -1,0 +1,147 @@
+---
+import {
+  colorTokens,
+  darkColorTokens,
+  frameworkTokens,
+  spacingTokens,
+  surfaceTokens,
+  typographyTokens,
+} from "../data/designSystem";
+---
+
+<section class="page-hero">
+  <div class="container-shell stack-lg">
+    <p class="eyebrow">Living design vocabulary</p>
+    <h1>New Life branding reference</h1>
+    <p class="lead">This page renders the same typed design tokens used by the production site. Change a token once and both the reference and website update together.</p>
+    <p class="handwritten">Editorial, neighbor-oriented, and human.</p>
+  </div>
+</section>
+
+<section class="section-shell section-border">
+  <div class="container-shell">
+    <div class="section-heading"><p class="eyebrow">Direction</p><div class="stack"><h2>Distinctive without becoming theatrical.</h2><p class="lead">Composition, typography, real photography, and restrained motion replace the generic slow-motion church background video.</p></div></div>
+    <div class="brand-four-grid">
+      <article class="brand-note"><h3>Tone</h3><ul><li>Restrained rather than loud</li><li>Editorial rather than promotional</li><li>Historic without feeling dusty</li><li>Warm and human without becoming casual</li><li>Structured without becoming cold</li></ul></article>
+      <article class="brand-note"><h3>Color meaning</h3><ul>{colorTokens.filter((token) => token.role && !["Sanctuary White", "Stone Ink", "Soft Slate", "Quiet Line"].includes(token.name)).map((token) => <li><strong>{token.name}</strong> = {token.role}</li>)}</ul></article>
+      <article class="brand-note"><h3>Usage rules</h3><ul><li>Neutrals should do most of the work</li><li>Accents stay sparse and intentional</li><li>Backgrounds feel like paper, not screens</li><li>Blue carries primary actions and trust</li><li>Avoid pure black and high saturation</li></ul></article>
+      <article class="brand-note"><h3>Current read</h3><ul><li>Thoughtful rather than hype-driven</li><li>Calm, confident, and image-led</li><li>Warm without novelty styling</li><li>Grounded in historic Christianity</li><li>Simple enough to scale</li></ul></article>
+    </div>
+  </div>
+</section>
+
+<section class="section-shell section-border" id="typography">
+  <div class="container-shell">
+    <div class="section-heading"><p class="eyebrow">Typography</p><div class="stack"><h2>Historic, readable, and lightly analog.</h2><p class="lead">The font stacks below come directly from the typed design system and become CSS custom properties on every page.</p></div></div>
+    <div class="brand-token-summary">{typographyTokens.map((token) => <div><strong>{token.name}</strong><span>{token.role}</span><code>{token.cssVar}</code></div>)}</div>
+    <div class="brand-type-grid">
+      <div><p class="brand-label">Display</p><p class="brand-display">A place to explore faith.</p></div>
+      <div><p class="brand-label">H1</p><p class="brand-h1">Primary page heading</p></div>
+      <div><p class="brand-label">H2</p><p class="brand-h2">Section heading</p></div>
+      <div><p class="brand-label">H3</p><p class="brand-h3">Subsection heading</p></div>
+      <div><p class="brand-label">H4 / Subhead</p><p class="brand-subhead">A quieter line for reflection.</p></div>
+      <div><p class="brand-label">Body large</p><p class="lead">A larger reading size for introductions and editorial emphasis.</p></div>
+      <div><p class="brand-label">Body</p><p>Standard reading copy uses IBM Plex Sans Light and a generous line height.</p></div>
+      <div><p class="brand-label">Small</p><p class="brand-small">Supporting detail uses IBM Plex Sans Regular for clarity.</p></div>
+      <div class="brand-type-wide"><p class="brand-label">Eyebrow</p><p class="eyebrow">Section label</p></div>
+      <div class="brand-type-wide"><p class="brand-label">Handwritten accent</p><p class="handwritten">Questions are welcome here.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section-shell section-border" id="spacing">
+  <div class="container-shell">
+    <div class="section-heading"><p class="eyebrow">Spacing</p><div class="stack"><h2>A repeatable four-pixel rhythm.</h2><p class="lead">Headline-to-body spacing stays at a 24px minimum and 32px preferred rhythm, while section insets repeat across templates.</p></div></div>
+    <div class="brand-spacing-grid">
+      <div class="brand-panel"><h3>Spacing scale</h3><div class="spacing-list">{spacingTokens.map((token) => <div class="spacing-row"><span>{token.name}</span><i style={`width:var(${token.cssVar})`}></i><small>{token.role}</small></div>)}</div></div>
+      <div class="stack-lg"><div class="brand-panel brand-rhythm"><h3>Headline / body rhythm</h3><p>This example uses the preferred 32px separation so related content remains open, calm, and readable.</p></div><div class="brand-panel"><h3>Section insets</h3><div class="inset-samples"><div class="inset-24">24px</div><div class="inset-32">32px</div><div class="inset-48">48px</div></div></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="section-shell section-border" id="colors">
+  <div class="container-shell">
+    <div class="section-heading"><p class="eyebrow">Color</p><div class="stack"><h2>A paper-like foundation with purposeful accents.</h2><p class="lead">Every swatch is generated from the source token that also drives production CSS.</p></div></div>
+    <h3 class="brand-section-title">Primary and accent palette</h3>
+    <div class="three-grid brand-palette">{colorTokens.map((token) => <div class={`brand-swatch brand-swatch-${token.tone}`} style={`background:var(${token.cssVar})`}><strong>{token.name}</strong><span>{token.value}</span><code>{token.cssVar}</code></div>)}</div>
+    <div class="brand-system-grid">
+      <section class="brand-color-system light-system"><h3>Light mode system</h3><div class="token-list">{[...colorTokens.slice(0, 5), ...surfaceTokens].map((token) => <div class="token-row"><i style={`background:var(${token.cssVar})`}></i><span><strong>{token.name}</strong><small>{token.cssVar}</small></span></div>)}</div></section>
+      <section class="brand-color-system dark-system"><h3>Dark mode tokens</h3><div class="token-list">{darkColorTokens.map((token) => <div class="token-row"><i style={`background:var(${token.cssVar})`}></i><span><strong>{token.name}</strong><small>{token.cssVar}</small></span></div>)}</div></section>
+    </div>
+  </div>
+</section>
+
+<section class="section-shell section-border" id="framework">
+  <div class="container-shell">
+    <div class="section-heading"><p class="eyebrow">Framework</p><div class="stack"><h2>Layout and motion are tokens too.</h2><p class="lead">Content widths, control radius, shadow, and transition timing live beside color and type rather than being hidden in individual components.</p></div></div>
+    <div class="brand-framework-grid">{frameworkTokens.map((token) => <div class="brand-panel"><h3>{token.name}</h3><code>{token.cssVar}</code><p>{token.value}</p></div>)}</div>
+  </div>
+</section>
+
+<section class="section-shell section-border" id="elements">
+  <div class="container-shell">
+    <div class="section-heading"><p class="eyebrow">Elements</p><div class="stack"><h2>Production components, not a separate style board.</h2><p class="lead">These examples use the same classes, tokens, and accessibility rules as the website.</p></div></div>
+    <div class="brand-elements-grid">
+      <div class="brand-panel"><h3>Actions</h3><div class="button-row"><a class="button" href="/visit/">Primary action</a><a class="button-secondary" href="/about/">Secondary action</a><a class="text-link" href="/faith/">Text link</a></div></div>
+      <div class="brand-panel"><h3>Form input</h3><label class="brand-field"><span>Email address</span><input type="email" placeholder="name@example.com" /></label></div>
+      <article class="brand-panel"><h3>Card</h3><p class="brand-subhead">A simple container with a quiet shadow.</p><p>Cards group related content without turning every section into a dashboard.</p></article>
+      <div><h3>Image placeholder block</h3><div class="photo-placeholder brand-image-placeholder">Image placeholder</div></div>
+      <article class="brand-panel brand-motion"><h3>Motion behavior</h3><ul><li>Gentle movement and crossfades</li><li>Still photography, never autoplay video</li><li>Stable layout during transitions</li><li>Paused while the page is hidden</li><li>Static composition for reduced motion</li></ul></article>
+      <article class="brand-panel"><h3>Focus and accessibility</h3><p>Visible gold focus rings, readable contrast, 16px minimum body text, descriptive image alt text, and keyboard-operable navigation are system requirements.</p></article>
+    </div>
+  </div>
+</section>
+
+<style>
+  .brand-four-grid, .brand-type-grid, .brand-elements-grid, .brand-system-grid, .brand-framework-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--nl-space-4); }
+  .brand-framework-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .brand-note, .brand-panel, .brand-type-grid > div { padding: clamp(var(--nl-space-5), 3vw, var(--nl-space-8)); border: 1px solid var(--line); background: var(--surface); box-shadow: var(--shadow); }
+  .brand-note ul, .brand-motion ul { margin: var(--nl-space-4) 0 0; padding-left: var(--nl-space-5); color: var(--slate); }
+  .brand-token-summary { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--nl-space-3); margin-bottom: var(--nl-space-6); }
+  .brand-token-summary > div { padding: var(--nl-space-4); border-top: 3px solid var(--blue); background: var(--wash-blue); }
+  .brand-token-summary strong, .brand-token-summary span, .brand-token-summary code { display: block; }
+  .brand-token-summary span { margin-top: var(--nl-space-2); color: var(--slate); font-size: 0.875rem; }
+  code { overflow-wrap: anywhere; color: var(--cedar); font-family: var(--font-mono); font-size: 0.72rem; }
+  .brand-label { margin-bottom: var(--nl-space-3); color: var(--slate); font-size: 0.82rem; }
+  .brand-display { font-family: var(--font-heading); font-size: clamp(2.6rem, 6vw, 4.8rem); font-weight: 600; line-height: 1; }
+  .brand-h1 { font-family: var(--font-heading); font-size: clamp(2.4rem, 5vw, 3.8rem); font-weight: 600; line-height: 1.04; }
+  .brand-h2 { font-family: var(--font-heading); font-size: clamp(2rem, 4vw, 3rem); font-weight: 600; line-height: 1.06; }
+  .brand-h3 { font-family: var(--font-heading); font-size: clamp(1.5rem, 3vw, 2.2rem); font-weight: 600; line-height: 1.1; }
+  .brand-subhead { font-family: var(--font-heading); font-size: 1.5rem; font-style: italic; line-height: 1.35; }
+  .brand-small { font-size: 0.875rem; font-weight: 400; }
+  .brand-type-wide { grid-column: 1 / -1; }
+  .brand-spacing-grid { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); gap: var(--nl-space-4); }
+  .spacing-list, .inset-samples { display: grid; gap: var(--nl-space-3); margin-top: var(--nl-space-5); }
+  .spacing-row { display: grid; grid-template-columns: 2rem minmax(5rem, 1fr) 3rem; gap: var(--nl-space-3); align-items: center; }
+  .spacing-row i { display: block; height: 0.8rem; min-width: var(--nl-space-1); background: var(--blue); }
+  .spacing-row small { color: var(--slate); }
+  .brand-rhythm p { margin-top: var(--nl-space-8); color: var(--slate); }
+  .inset-samples > div { border: 1px solid var(--line); background: var(--paper); }
+  .inset-24 { padding: var(--nl-space-6); } .inset-32 { padding: var(--nl-space-8); } .inset-48 { padding: var(--nl-space-12); }
+  .brand-section-title { margin-bottom: var(--nl-space-5); }
+  .brand-palette { margin-bottom: var(--nl-space-12); }
+  .brand-swatch { min-height: 10rem; padding: var(--nl-space-5); }
+  .brand-swatch strong, .brand-swatch span, .brand-swatch code { display: block; }
+  .brand-swatch span { margin-top: var(--nl-space-1); font-family: var(--font-mono); font-size: 0.75rem; }
+  .brand-swatch code { margin-top: var(--nl-space-2); color: currentColor; opacity: 0.8; }
+  .brand-swatch-dark { color: var(--paper); }
+  .brand-swatch-light { color: var(--ink); border: 1px solid var(--line); }
+  .brand-color-system { padding: var(--nl-space-8); border: 1px solid var(--line); }
+  .light-system { background: var(--surface); }
+  .dark-system { border-color: var(--dark-border); background: var(--dark-background); color: var(--dark-text); }
+  .dark-system h3, .dark-system strong { color: var(--dark-text); }
+  .dark-system small { color: var(--dark-text-soft); }
+  .token-list { display: grid; gap: var(--nl-space-3); margin-top: var(--nl-space-5); }
+  .token-row { display: grid; grid-template-columns: 3rem 1fr; gap: var(--nl-space-3); align-items: center; }
+  .token-row i { display: block; height: 2.5rem; border: 1px solid rgb(128 128 128 / 0.35); }
+  .token-row span, .token-row small { display: block; }
+  .token-row small { color: var(--slate); font-family: var(--font-mono); font-size: 0.7rem; }
+  .brand-panel > p:not(.brand-subhead), .brand-panel .brand-subhead + p { margin-top: var(--nl-space-4); color: var(--slate); }
+  .brand-panel .button-row { margin-top: var(--nl-space-5); }
+  .brand-field { display: grid; gap: var(--nl-space-2); margin-top: var(--nl-space-4); color: var(--slate); font-size: 0.9rem; }
+  .brand-field input { width: 100%; min-height: 3.2rem; padding: var(--nl-space-3) var(--nl-space-4); border: 1px solid var(--line); border-radius: var(--nl-radius-control); background: var(--paper); color: var(--ink); font: inherit; }
+  .brand-field input:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+  .brand-image-placeholder { min-height: 15rem; margin-top: var(--nl-space-4); }
+  @media (max-width: 900px) { .brand-token-summary, .brand-framework-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 760px) { .brand-four-grid, .brand-type-grid, .brand-elements-grid, .brand-system-grid, .brand-spacing-grid, .brand-token-summary, .brand-framework-grid { grid-template-columns: 1fr; } .brand-type-wide { grid-column: auto; } }
+</style>

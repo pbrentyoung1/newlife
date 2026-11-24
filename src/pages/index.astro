@@ -1,0 +1,82 @@
+---
+import HeroMosaic from "../components/HeroMosaic.astro";
+import PlatformSignpost from "../components/PlatformSignpost.astro";
+import { destination } from "../data/destinations";
+import { site } from "../data/site";
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout>
+  <section class="hero">
+    <div class="container-shell hero-layout">
+      <div class="hero-copy stack-lg">
+        <p class="eyebrow">New Life · Spring, Texas</p>
+        <h1>{site.invitation}</h1>
+        <p class="lead">At New Life in Spring, we are learning to follow Jesus, build relationships, and serve our neighbors. You do not need to have everything figured out before you walk through the door.</p>
+        <div class="button-row">
+          <a class="button" href="/visit/">Join us this Sunday</a>
+          <a class="button-secondary" href="/faith/">Explore faith</a>
+        </div>
+      </div>
+      <HeroMosaic />
+    </div>
+  </section>
+
+  <section class="section-shell section-border">
+    <div class="container-shell">
+      <div class="section-heading">
+        <div class="stack"><p class="eyebrow">A first visit</p><p class="handwritten">Questions are welcome here.</p></div>
+        <div class="stack"><h2>A Sunday you can walk into.</h2><p class="lead">Know where to go, what the morning feels like, and who can help before you arrive.</p></div>
+      </div>
+      <div class="three-grid">
+        <article class="editorial-card"><h3>Come as you are</h3><p>Expect a thoughtful service centered on Jesus, Scripture, prayer, and music—without pressure to pretend you already know the rhythms.</p></article>
+        <article class="editorial-card"><h3>Find your way</h3><p>We will make parking, entrances, children’s check-in, accessibility, and service information clear on the visit page.</p></article>
+        <article class="editorial-card"><h3>Meet a person</h3><p>If walking into a church is a big step, you can ask a question first and arrange for someone to meet you.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-shell section-tint">
+    <div class="container-shell feature-split">
+      <div class="photo-placeholder">Asset needed · candid life-together photography</div>
+      <div class="stack-lg">
+        <p class="eyebrow">Life together</p>
+        <h2>Faith grows in ordinary relationships.</h2>
+        <p class="lead">New Life is a smaller church where people can be known. We share meals, pray, learn, care for one another, and keep showing up.</p>
+        <a class="button-secondary" href="/connect/">Find your next step</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-shell section-border">
+    <div class="container-shell feature-split">
+      <div class="stack-lg">
+        <p class="eyebrow">Serving Spring</p>
+        <h2>Good neighbors for the long haul.</h2>
+        <p class="lead">Our public site will introduce the local relationships and service that shape New Life. Current opportunities will stay in Church Center, where they can remain accurate.</p>
+        <a class="button-secondary" href="/community/">Meet our community</a>
+      </div>
+      <div class="photo-placeholder">Asset needed · New Life serving in Spring</div>
+    </div>
+  </section>
+
+  <section class="section-shell section-border">
+    <div class="container-shell">
+      <div class="section-heading">
+        <p class="eyebrow">The right place for the next step</p>
+        <div class="stack"><h2>A simple public website, connected to the tools the church already uses.</h2><p class="lead">The website explains New Life. Church Center manages current participation. YouTube holds sermons and livestreams.</p></div>
+      </div>
+      <div class="platform-grid">
+        <PlatformSignpost eyebrow="Church life" title="Church Center" body="Events, groups, signups, giving, serving, membership, and prayer live in one current church-facing home." href={destination("churchCenter")} linkLabel="Open Church Center" tone="sage" />
+        <PlatformSignpost eyebrow="Messages and live video" title="YouTube" body="Browse sermon videos and series playlists, or find the current livestream without maintaining a second media library." href={destination("youtubeChannel")} linkLabel="Watch on YouTube" tone="clay" />
+      </div>
+    </div>
+  </section>
+
+  <section class="section-shell section-blue">
+    <div class="container-shell feature-split">
+      <div class="stack"><p class="eyebrow">Start here</p><h2>Come see New Life for yourself.</h2><p class="lead">We will give you the practical details and leave room for a real conversation.</p></div>
+      <div class="button-row"><a class="button" style="background:var(--paper);color:var(--blue);border-color:var(--paper)" href="/visit/">Plan a visit</a><a class="button-secondary" style="color:var(--paper);border-color:var(--paper)" href="/contact/">Ask a question</a></div>
+    </div>
+  </section>
+</BaseLayout>

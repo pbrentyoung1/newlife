@@ -1,0 +1,19 @@
+---
+interface Props {
+  eyebrow: string;
+  title: string;
+  body: string;
+  href?: string;
+  linkLabel: string;
+  tone?: "blue" | "sage" | "clay";
+}
+
+const { eyebrow, title, body, href, linkLabel, tone = "blue" } = Astro.props;
+---
+
+<article class="platform-signpost" data-tone={tone}>
+  <p class="eyebrow">{eyebrow}</p>
+  <h3>{title}</h3>
+  <p>{body}</p>
+  {href ? <a class="text-link" href={href} rel="noreferrer">{linkLabel}</a> : <span class="pending-link">{linkLabel} · destination pending</span>}
+</article>
