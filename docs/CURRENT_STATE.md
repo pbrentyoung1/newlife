@@ -2,7 +2,7 @@
 
 Updated November 24, 2026.
 
-## Implemented locally
+## Implemented and deployed to staging
 
 - Astro static foundation and strict TypeScript configuration
 - shared header and footer
@@ -15,12 +15,28 @@ Updated November 24, 2026.
 - explicit publication indexes
 - noindex/robots prelaunch protection
 - production build producing 17 routes
+- GitHub `main` connected to Hostinger Web Apps
+- Hostinger staging deployment at `https://legendary-white-clam-37.hostingersite.com/`
+- Astro build settings: Node 24.x, npm, `npm run build`, output directory `dist`
+- staging deployment verified at commit `3900399`
+- desktop and mobile layout checks, mobile navigation, hero rotation, and `/brand/` verified in the deployed build
+- browser console verified without warnings or errors
+- dependency audit verified with zero known vulnerabilities
 
-## Pending before repository push
+## Deployment safeguards
 
-- Hostinger must be changed from direct repository-root publishing to an Astro build that serves only `dist/`.
-- The official Hostinger MCP connector has been added to Codex and authorized; the active task runtime must refresh before its operations become callable.
-- Replace the original root deployment-check HTML only after the Hostinger build configuration is verified.
+- The legacy production Git auto-deployment is disabled so repository source files cannot be published directly.
+- `www.newlifespring.org` has not been moved to the new Web App and remains unchanged.
+- Search indexing stays disabled until the content, destinations, and launch assets are approved.
+- The official Hostinger MCP connector is installed and authorized; browser-based Hostinger management was used for this deployment because its tools were not exposed in the active runtime.
+
+## Next release gate
+
+- replace visible asset placeholders with approved photography and branding
+- verify all public facts, especially Sunday time, address, parking, children, and accessibility details
+- replace pending Planning Center and YouTube destinations with approved public links
+- complete content review and accessibility QA
+- connect `www.newlifespring.org` only after explicit launch approval
 
 ## Content and assets still needed
 
