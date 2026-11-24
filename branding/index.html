@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow, noarchive" />
+    <meta name="description" content="Living brand reference for the New Life Spring website." />
+    <title>Branding Reference | New Life Spring</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Homemade+Apple&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&family=IBM+Plex+Serif:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        --palette-blue: #2f5d7c;
+        --palette-paper: #f7f5f1;
+        --palette-ink: #3e474d;
+        --palette-slate: #69767d;
+        --palette-line: #d8d4cd;
+        --palette-sage: #7e8d7a;
+        --palette-clay: #c47a63;
+        --palette-gold: #b79a5b;
+        --palette-cedar: #8a6662;
+        --color-page: var(--palette-paper);
+        --color-surface: #fffefa;
+        --color-text: var(--palette-ink);
+        --color-text-soft: var(--palette-slate);
+        --color-border: var(--palette-line);
+        --color-action: var(--palette-blue);
+        --color-on-action: var(--palette-paper);
+        --font-heading: "IBM Plex Serif", Georgia, serif;
+        --font-body: "IBM Plex Sans", Arial, sans-serif;
+        --font-mono: "IBM Plex Mono", monospace;
+        --font-hand: "Homemade Apple", cursive;
+        --content: 74rem;
+        --reading: 46rem;
+        --radius: 0.3rem;
+        --shadow: 0 18px 45px rgb(62 71 77 / 0.1);
+      }
+
+      * { box-sizing: border-box; }
+
+      html {
+        background: var(--color-page);
+        color: var(--color-text);
+        font-family: var(--font-body);
+        scroll-behavior: smooth;
+      }
+
+      body { margin: 0; }
+
+      a { color: var(--color-action); text-underline-offset: 0.25em; }
+      a:hover { color: var(--palette-cedar); }
+      a:focus-visible, button:focus-visible, input:focus-visible {
+        outline: 3px solid var(--palette-gold);
+        outline-offset: 3px;
+      }
+
+      h1, h2, h3 {
+        margin: 0;
+        font-family: var(--font-heading);
+        line-height: 1.08;
+      }
+
+      h1 { font-size: clamp(2.6rem, 7vw, 5.4rem); letter-spacing: -0.04em; }
+      h2 { font-size: clamp(1.8rem, 4vw, 3rem); letter-spacing: -0.025em; }
+      h3 { font-size: 1.25rem; }
+      p { margin: 0; line-height: 1.75; }
+
+      .shell { width: min(calc(100% - 2rem), var(--content)); margin-inline: auto; }
+      .reading { max-width: var(--reading); }
+      .stack > * + * { margin-top: 1.25rem; }
+      .stack-lg > * + * { margin-top: 2rem; }
+      .eyebrow {
+        color: var(--palette-blue);
+        font-family: var(--font-mono);
+        font-size: 0.76rem;
+        font-weight: 500;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+
+      .site-header {
+        border-bottom: 1px solid var(--color-border);
+        background: rgb(247 245 241 / 0.92);
+      }
+
+      .header-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1.5rem;
+        padding-block: 1.15rem;
+      }
+
+      .wordmark {
+        color: var(--color-text);
+        font-family: var(--font-heading);
+        font-size: 1.3rem;
+        font-weight: 600;
+        line-height: 1;
+        text-decoration: none;
+      }
+
+      .wordmark small {
+        display: block;
+        margin-top: 0.25rem;
+        color: var(--color-text-soft);
+        font-family: var(--font-mono);
+        font-size: 0.56rem;
+        font-weight: 400;
+        letter-spacing: 0.11em;
+        text-transform: uppercase;
+      }
+
+      .header-note {
+        color: var(--color-text-soft);
+        font-family: var(--font-mono);
+        font-size: 0.7rem;
+        text-align: right;
+        text-transform: uppercase;
+      }
+
+      .hero { padding-block: clamp(4rem, 9vw, 8rem); }
+      .hero-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.1fr) minmax(18rem, 0.9fr);
+        gap: clamp(2rem, 6vw, 6rem);
+        align-items: center;
+      }
+
+      .hero-copy { color: var(--color-text-soft); font-size: clamp(1.1rem, 2vw, 1.35rem); }
+      .hand { color: var(--palette-clay); font-family: var(--font-hand); font-size: 1.05rem; }
+
+      .mosaic {
+        display: grid;
+        grid-template-columns: 0.8fr 1.2fr;
+        grid-template-rows: 10rem 7rem 8rem;
+        gap: 0.75rem;
+      }
+
+      .mosaic div {
+        display: grid;
+        place-items: center;
+        padding: 1rem;
+        background: color-mix(in srgb, var(--palette-sage) 20%, var(--palette-paper));
+        color: var(--color-text-soft);
+        font-family: var(--font-mono);
+        font-size: 0.65rem;
+        letter-spacing: 0.08em;
+        text-align: center;
+        text-transform: uppercase;
+      }
+
+      .mosaic div:first-child { grid-row: 1 / 3; background: color-mix(in srgb, var(--palette-blue) 17%, var(--palette-paper)); }
+      .mosaic div:nth-child(2) { background: color-mix(in srgb, var(--palette-clay) 20%, var(--palette-paper)); }
+      .mosaic div:nth-child(3) { background: color-mix(in srgb, var(--palette-gold) 21%, var(--palette-paper)); }
+      .mosaic div:last-child { grid-column: 1 / 3; }
+
+      .section { padding-block: clamp(3.5rem, 7vw, 6rem); border-top: 1px solid var(--color-border); }
+      .section-head {
+        display: grid;
+        grid-template-columns: minmax(12rem, 0.6fr) minmax(0, 1.4fr);
+        gap: 2rem;
+        margin-bottom: 2.5rem;
+      }
+
+      .section-intro { color: var(--color-text-soft); font-size: 1.05rem; }
+      .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+      .grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .card {
+        padding: 1.5rem;
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius);
+        background: var(--color-surface);
+        box-shadow: var(--shadow);
+      }
+
+      .card p { color: var(--color-text-soft); }
+      .swatch { min-height: 8rem; padding: 1rem; border-radius: var(--radius); }
+      .swatch strong, .swatch span { display: block; }
+      .swatch span { margin-top: 0.25rem; font-family: var(--font-mono); font-size: 0.72rem; }
+      .dark { color: var(--palette-paper); }
+      .light { color: var(--palette-ink); }
+
+      .type-sample { padding-block: 1.5rem; border-bottom: 1px solid var(--color-border); }
+      .type-sample:last-child { border-bottom: 0; }
+      .display { font-family: var(--font-heading); font-size: clamp(2.4rem, 6vw, 4.5rem); font-weight: 600; line-height: 1; }
+      .subhead { font-family: var(--font-heading); font-size: 1.45rem; font-style: italic; }
+      .mono { font-family: var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; }
+
+      .actions { display: flex; flex-wrap: wrap; gap: 0.8rem; }
+      .button {
+        display: inline-flex;
+        min-height: 2.9rem;
+        align-items: center;
+        justify-content: center;
+        padding: 0.75rem 1rem;
+        border: 1px solid var(--color-action);
+        border-radius: var(--radius);
+        background: var(--color-action);
+        color: var(--color-on-action);
+        font-family: var(--font-mono);
+        font-size: 0.72rem;
+        font-weight: 500;
+        letter-spacing: 0.08em;
+        text-decoration: none;
+        text-transform: uppercase;
+      }
+
+      .button.secondary { background: transparent; color: var(--color-action); }
+      .button:hover { background: var(--palette-cedar); border-color: var(--palette-cedar); color: var(--color-on-action); }
+
+      .platform {
+        padding: 1.5rem;
+        border-left: 4px solid var(--palette-sage);
+        background: color-mix(in srgb, var(--palette-sage) 9%, var(--palette-paper));
+      }
+
+      .platform.youtube { border-color: var(--palette-clay); background: color-mix(in srgb, var(--palette-clay) 8%, var(--palette-paper)); }
+      .platform p { color: var(--color-text-soft); }
+
+      .motion-list { padding-left: 1.25rem; color: var(--color-text-soft); line-height: 1.8; }
+
+      footer { padding-block: 2rem; border-top: 1px solid var(--color-border); color: var(--color-text-soft); font-size: 0.8rem; }
+      footer .shell { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; }
+
+      @media (max-width: 800px) {
+        .hero-grid, .section-head { grid-template-columns: 1fr; }
+        .grid, .grid.two { grid-template-columns: 1fr; }
+        .header-note { display: none; }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html { scroll-behavior: auto; }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="shell header-inner">
+        <a class="wordmark" href="/">New Life <small>Christian Reformed Church · Spring, Texas</small></a>
+        <div class="header-note">Preliminary Brand v1 · Living Reference</div>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="shell hero-grid">
+          <div class="stack-lg">
+            <p class="eyebrow">Living design vocabulary</p>
+            <h1>New Life branding reference</h1>
+            <p class="hero-copy">A warm, thoughtful, image-led system for a church where people can explore faith, share life, and serve their neighbors.</p>
+            <p class="hand">Editorial, neighbor-oriented, and human.</p>
+            <div class="actions">
+              <a class="button" href="#elements">View elements</a>
+              <a class="button secondary" href="#platforms">Platform roles</a>
+            </div>
+          </div>
+          <div class="mosaic" aria-label="Animated hero image roles">
+            <div>Sunday welcome portrait</div>
+            <div>Worship detail</div>
+            <div>Conversation candid</div>
+            <div>Church exterior and neighborhood</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="direction">
+        <div class="shell">
+          <div class="section-head">
+            <div class="stack"><p class="eyebrow">Direction</p><p class="hand">No slow-motion background video.</p></div>
+            <div class="stack"><h2>Distinctive without becoming theatrical.</h2><p class="section-intro">The visual system uses composition, typography, real photography, and restrained motion rather than a generic church template.</p></div>
+          </div>
+          <div class="grid">
+            <article class="card stack"><h3>Warm and grounded</h3><p>Real people, real places, understandable language, and practical hospitality.</p></article>
+            <article class="card stack"><h3>Editorial and calm</h3><p>Generous space, meaningful hierarchy, and confident but restrained use of color.</p></article>
+            <article class="card stack"><h3>Explicitly Christian</h3><p>Jesus and the Gospel remain clear without turning every paragraph into institutional promotion.</p></article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="colors">
+        <div class="shell">
+          <div class="section-head">
+            <p class="eyebrow">Color</p>
+            <div class="stack"><h2>A paper-like foundation with purposeful accents.</h2><p class="section-intro">Neutrals do most of the work. Blue carries action and trust; sage, clay, gold, and cedar add specific warmth.</p></div>
+          </div>
+          <div class="grid">
+            <div class="swatch dark" style="background:#2f5d7c"><strong>Primary Blue</strong><span>#2F5D7C</span></div>
+            <div class="swatch light" style="background:#f7f5f1; border:1px solid #d8d4cd"><strong>Sanctuary White</strong><span>#F7F5F1</span></div>
+            <div class="swatch dark" style="background:#3e474d"><strong>Stone Ink</strong><span>#3E474D</span></div>
+            <div class="swatch dark" style="background:#69767d"><strong>Soft Slate</strong><span>#69767D</span></div>
+            <div class="swatch light" style="background:#d8d4cd"><strong>Quiet Line</strong><span>#D8D4CD</span></div>
+            <div class="swatch dark" style="background:#7e8d7a"><strong>Garden Sage</strong><span>#7E8D7A</span></div>
+            <div class="swatch dark" style="background:#c47a63"><strong>Clay Hearth</strong><span>#C47A63</span></div>
+            <div class="swatch dark" style="background:#b79a5b"><strong>Harvest Gold</strong><span>#B79A5B</span></div>
+            <div class="swatch dark" style="background:#8a6662"><strong>Dusty Cedar</strong><span>#8A6662</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="typography">
+        <div class="shell">
+          <div class="section-head">
+            <p class="eyebrow">Typography</p>
+            <div class="stack"><h2>Historic, readable, and lightly analog.</h2><p class="section-intro">IBM Plex provides the durable reading system. Homemade Apple appears only as a human accent.</p></div>
+          </div>
+          <div class="card">
+            <div class="type-sample"><p class="eyebrow">IBM Plex Serif · Semibold</p><p class="display">A place to explore faith and share life.</p></div>
+            <div class="type-sample"><p class="eyebrow">IBM Plex Serif · Italic</p><p class="subhead">A quieter transitional line for reflection and invitation.</p></div>
+            <div class="type-sample"><p class="eyebrow">IBM Plex Sans · Light</p><p>At New Life in Spring, we're learning to follow Jesus, build relationships, and serve our neighbors. We'd love to meet you.</p></div>
+            <div class="type-sample"><p class="mono">IBM Plex Mono · Section label</p></div>
+            <div class="type-sample"><p class="hand">Homemade Apple · Questions are welcome here.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="elements">
+        <div class="shell">
+          <div class="section-head">
+            <p class="eyebrow">Elements</p>
+            <div class="stack"><h2>Simple actions and quiet surfaces.</h2><p class="section-intro">The interface should support the invitation instead of competing with it.</p></div>
+          </div>
+          <div class="grid two">
+            <div class="card stack"><h3>Actions</h3><div class="actions"><a class="button" href="/">Plan Your Visit</a><a class="button secondary" href="/">Explore Faith</a><a href="/">Ask a question</a></div></div>
+            <div class="card stack"><h3>Editorial card</h3><p>Use cards only when grouping helps understanding. Avoid turning every section into a grid of interchangeable boxes.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="motion">
+        <div class="shell">
+          <div class="section-head">
+            <p class="eyebrow">Motion</p>
+            <div class="stack"><h2>Animated still images, not background video.</h2><p class="section-intro">Motion belongs primarily in the homepage hero. The remainder of the page stays calm.</p></div>
+          </div>
+          <div class="grid two">
+            <div class="card stack"><h3>Hero themes</h3><ol class="motion-list"><li>Sunday at New Life</li><li>Life Together</li><li>Serving Spring</li></ol></div>
+            <div class="card stack"><h3>Behavior</h3><ul class="motion-list"><li>Gentle movement and crossfades</li><li>Stable layout during transitions</li><li>Pause when the page is hidden</li><li>Useful without JavaScript</li><li>Static composition for reduced motion</li></ul></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="platforms">
+        <div class="shell">
+          <div class="section-head">
+            <p class="eyebrow">Platform roles</p>
+            <div class="stack"><h2>One invitation, clear destinations.</h2><p class="section-intro">The public website explains why a next step matters, then sends the person to the system responsible for that step.</p></div>
+          </div>
+          <div class="grid two">
+            <article class="platform stack"><h3>Planning Center</h3><p>Events, announcements, groups, signups, giving, forms, membership, serving, prayer, and congregation participation.</p></article>
+            <article class="platform youtube stack"><h3>YouTube</h3><p>Sermon videos, series playlists, livestream source, recordings, and public video discovery.</p></article>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer><div class="shell"><span>New Life Christian Reformed Church · Spring, Texas</span><span>Preliminary Brand v1 · November 24, 2026</span></div></footer>
+  </body>
+</html>
