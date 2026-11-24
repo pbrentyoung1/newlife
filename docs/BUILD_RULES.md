@@ -14,7 +14,10 @@ Before deployment:
 ```sh
 npm ci
 npm run build
+npm run audit:brand
 git diff --check
 ```
 
 Verify `/`, `/brand/`, mobile navigation, canonical metadata, robots directives, and a representative interior route.
+
+For a sitewide design change, `npm run audit:brand` verifies every generated route for shared tokens, header/footer presence, one H1, and prelaunch robots protection. Browser QA must still check horizontal overflow and interactions. Follow the full checklist in `DESIGN_SYSTEM.md`.

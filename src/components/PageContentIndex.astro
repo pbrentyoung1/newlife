@@ -1,0 +1,29 @@
+---
+interface Props {
+  sections: readonly string[];
+}
+
+const { sections } = Astro.props;
+---
+
+<section class="section-shell page-content-section">
+  <div class="container-shell page-content-layout">
+    <div class="page-content-intro stack">
+      <p class="eyebrow">On this page</p>
+      <h2>A clear path through the subject.</h2>
+      <p class="lead">Each section has a distinct job. Facts, imagery, and links will be added only after they are verified.</p>
+    </div>
+
+    <div class="page-content-index" aria-label="Planned page sections">
+      {sections.map((section) => (
+        <article class="page-content-item">
+          <span class="page-content-mark" aria-hidden="true"></span>
+          <div class="stack">
+            <h3>{section}</h3>
+            <p>Reviewed copy and supporting details are being prepared.</p>
+          </div>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>

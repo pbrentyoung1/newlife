@@ -12,9 +12,12 @@ Do not create a second operational system inside the website.
 ## Component ownership
 
 - `BaseLayout` owns metadata, global design variables, header, and footer.
+- `PageLayout` owns the shared editorial hero grammar for interior routes.
 - `Header` and `Footer` consume shared navigation and site data.
 - `HeroMosaic` owns the animated still-image composition and reduced-motion behavior.
+- `PageContentIndex` owns the standard editorial index used while interior content is prepared.
 - Pages compose sections; they do not redefine global church facts or design tokens.
+- `src/data/pages.ts` owns route-level titles, descriptions, human notes, semantic tones, and section scope.
 - Content entries own durable editorial copy.
 - Typed data modules own repeated facts and destinations.
 
@@ -32,6 +35,8 @@ Do not create a second operational system inside the website.
 - motion timing.
 
 `BaseLayout` serializes those tokens to CSS custom properties on the document root. `global.css` maps production styles to those variables. The `/brand/` reference imports the same token objects for its labels and samples. Never maintain a separate style-guide palette.
+
+See `DESIGN_SYSTEM.md` for the page grammar, route-tone map, component rules, and review checklist.
 
 ## Content source
 

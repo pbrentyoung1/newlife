@@ -1,21 +1,30 @@
 ---
 import BaseLayout from "./BaseLayout.astro";
+import type { PageTone } from "../data/pages";
 
 interface Props {
   eyebrow: string;
   title: string;
   description: string;
+  note?: string;
+  tone?: PageTone;
 }
 
-const { eyebrow, title, description } = Astro.props;
+const { eyebrow, title, description, note, tone = "blue" } = Astro.props;
 ---
 
 <BaseLayout title={title} description={description}>
-  <header class="page-hero">
-    <div class="container-shell stack">
-      <p class="eyebrow">{eyebrow}</p>
-      <h1>{title}</h1>
-      <p class="lead">{description}</p>
+  <header class="page-hero" data-tone={tone}>
+    <div class="container-shell page-hero-layout">
+      <div class="page-hero-copy stack">
+        <p class="eyebrow">{eyebrow}</p>
+        <h1>{title}</h1>
+        <p class="lead">{description}</p>
+      </div>
+      <div class="page-hero-aside" aria-hidden={note ? undefined : "true"}>
+        <span class="page-hero-rule"></span>
+        {note && <p class="handwritten">{note}</p>}
+      </div>
     </div>
   </header>
   <slot />

@@ -1,38 +1,28 @@
 ---
 import PageLayout from "../layouts/PageLayout.astro";
+import PageContentIndex from "../components/PageContentIndex.astro";
+import { sitePages } from "../data/pages";
 
 export function getStaticPaths() {
-  const pages = [
-  { slug: "visit", eyebrow: "Plan a visit", title: "Your first Sunday", description: "A clear, practical guide to arriving, worshiping, and finding help at New Life.", sections: ["When and where", "Parking and entrances", "What the service is like", "Children and accessibility", "Meet someone before you arrive"] },
-  { slug: "about", eyebrow: "About New Life", title: "Following Jesus together", description: "New Life’s identity, mission, story, values, and Christian Reformed roots—written for people who do not already know us.", sections: ["Who we are", "Our mission and values", "Our story", "Christian Reformed", "What shapes our life together"] },
-  { slug: "beliefs", eyebrow: "What we believe", title: "Historic Christian faith", description: "An accessible, reviewed account of the Gospel, Scripture, the Church, and our Reformed understanding of faith.", sections: ["Jesus and the Gospel", "Scripture", "Grace and discipleship", "The Church", "Christian Reformed tradition"] },
-  { slug: "faith", eyebrow: "Explore faith", title: "Bring your questions", description: "A welcoming place to learn about Jesus, Christianity, and what a next step might look like.", sections: ["Who is Jesus?", "What is the Gospel?", "Questions and doubts", "Read and explore", "Talk with a person"] },
-  { slug: "leadership", eyebrow: "Leadership", title: "People who serve New Life", description: "Current, verified introductions to New Life’s pastor, staff, council, and appropriate public contacts.", sections: ["Pastor and staff", "Council", "How leadership works", "Contact"] },
-  { slug: "connect", eyebrow: "Connect", title: "Share life and take a next step", description: "Stable introductions to relationships, membership, serving, and groups, with current participation handled in Church Center.", sections: ["Groups", "Membership", "Serving", "Women", "Church Center"] },
-  { slug: "children", eyebrow: "Children", title: "A thoughtful welcome for families", description: "Verified first-visit information for parents and caregivers, without overstating programs or schedules.", sections: ["A first Sunday", "Ages and environments", "Check-in and safety", "Current activities", "Ask a question"] },
-  { slug: "youth", eyebrow: "Youth", title: "Faith, friendship, and growing up", description: "A clear introduction for students and families, with current schedules and signups in Church Center.", sections: ["Who it is for", "What to expect", "Current gatherings", "Meet a leader"] },
-  { slug: "preschool", eyebrow: "New Life Christian School", title: "Church and school in one community", description: "A concise introduction to the relationship between New Life and the school, with admissions and operations on the school’s website.", sections: ["Our relationship", "For prospective families", "Tours and enrollment", "School website"] },
-  { slug: "community", eyebrow: "Our community", title: "Serving Spring through real relationships", description: "Verified local partners, outward service, and the ways New Life participates in the life of our neighborhood.", sections: ["Local relationships", "Serving opportunities", "Church planting", "How to participate"] },
-  { slug: "watch", eyebrow: "Sermons and live video", title: "Watch on YouTube", description: "A curated doorway to recent messages, sermon-series playlists, and New Life’s livestream—not a duplicate media archive.", sections: ["Featured series", "Recent messages", "Watch live", "YouTube channel"] },
-  { slug: "contact", eyebrow: "Contact", title: "Talk with a person", description: "Verified office contact, directions, and a clear way to ask a question before you visit.", sections: ["Church office", "Directions", "General questions", "Prayer requests"] },
-  { slug: "privacy", eyebrow: "Privacy", title: "How this website handles information", description: "A plain-language account of analytics, external destinations, forms, and the information New Life does and does not collect.", sections: ["Website analytics", "External services", "Forms", "Contact"] },
-  ];
-
-  return pages.map((page) => ({ params: { slug: page.slug }, props: page }));
+  return sitePages.map((page) => ({ params: { slug: page.slug }, props: page }));
 }
 
-const { eyebrow, title, description, sections } = Astro.props;
+const { eyebrow, title, description, note, tone, sections } = Astro.props;
 ---
 
-<PageLayout eyebrow={eyebrow} title={title} description={description}>
-  <section class="section-shell">
-    <div class="container-shell">
-      <div class="section-heading">
-        <p class="eyebrow">Content inventory</p>
-        <div class="stack"><h2>This page is structured and ready for verified content.</h2><p class="lead">The headings below show the agreed scope. They will be filled from the current-site inventory, church review, and the correct external destinations.</p></div>
+<PageLayout eyebrow={eyebrow} title={title} description={description} note={note} tone={tone}>
+  <PageContentIndex sections={sections} />
+
+  <section class="section-shell section-blue page-next-step">
+    <div class="container-shell feature-split">
+      <div class="stack">
+        <p class="eyebrow">While we build</p>
+        <h2>Looking for something specific?</h2>
+        <p class="lead">The new site is still being prepared. A person can help you find the current information.</p>
       </div>
-      <div class="three-grid">
-        {sections.map((section) => <article class="editorial-card"><h3>{section}</h3><p>Copy, facts, imagery, and links are pending verification.</p></article>)}
+      <div class="button-row">
+        <a class="button button-on-dark" href="/contact/">Ask a question</a>
+        <a class="button-secondary button-on-dark" href="/">Return home</a>
       </div>
     </div>
   </section>

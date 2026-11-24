@@ -10,7 +10,8 @@ Updated November 24, 2026.
 - animated still-image hero with three themes
 - reduced-motion and hidden-page behavior
 - mission-facing homepage wireframe
-- placeholder interior sitemap routes
+- branded interior sitemap routes with typed semantic tones and human accent notes
+- shared editorial page hero and content-index components
 - typed Markdown collection schemas
 - explicit publication indexes
 - noindex/robots prelaunch protection
@@ -22,6 +23,8 @@ Updated November 24, 2026.
 - desktop and mobile layout checks, mobile navigation, hero rotation, and `/brand/` verified in the deployed build
 - browser console verified without warnings or errors
 - dependency audit verified with zero known vulnerabilities
+- all 17 generated routes audited for shared tokens, global chrome, robots protection, browser errors, and horizontal overflow
+- design-system ownership, page grammar, route-tone map, and review checklist documented in `docs/DESIGN_SYSTEM.md`
 
 ## Deployment safeguards
 

@@ -18,6 +18,7 @@ npm install
 npm run dev
 npm run build
 npm run preview
+npm run audit:brand
 ```
 
 The production artifact is `dist/`. Hostinger must be configured to build the repository and publish only that directory.
@@ -37,7 +38,8 @@ Search indexing is intentionally disabled until launch approval.
 - Navigation: `src/data/navigation.ts`
 - External destinations: `src/data/destinations.ts`
 - Hero themes: `src/data/heroGallery.ts`
+- Interior page vocabulary and scope: `src/data/pages.ts`
 - Durable editorial content: `src/content/`
 - Publication/order: `src/content-indexes/`
 
-See `docs/` before changing architecture, content workflows, or deployment behavior.
+Start with `docs/DESIGN_SYSTEM.md`, then see the remaining `docs/` before changing architecture, content workflows, or deployment behavior.
