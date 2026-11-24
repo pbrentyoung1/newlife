@@ -11,7 +11,7 @@ const { eyebrow, title, description, note, tone, sections } = Astro.props;
 ---
 
 <PageLayout eyebrow={eyebrow} title={title} description={description} note={note} tone={tone}>
-  <PageContentIndex sections={sections} />
+  <PageContentIndex sections={sections} tone={tone} />
 
   <section class="section-shell section-blue page-next-step">
     <div class="container-shell feature-split">

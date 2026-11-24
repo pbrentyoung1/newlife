@@ -10,6 +10,8 @@ Updated November 24, 2026.
 - semantic corner-radius tokens for controls, cards, images, and pills
 - `@lucide/astro` established as the sole production icon library and demonstrated on the living brand reference
 - New Life design tokens and living brand reference
+- semantic color roles that keep actions, focus, community, human story, teaching, and pastoral reflection consistent across components
+- IBM Plex Sans Medium for primary navigation; Plex Mono reserved for sparse editorial and technical cues
 - animated still-image hero with three themes, five unequal cards, four reviewed composition presets, and non-repeating random theme/layout selection
 - reduced-motion and hidden-page behavior
 - mission-facing homepage wireframe

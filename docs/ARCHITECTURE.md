@@ -25,7 +25,7 @@ Do not create a second operational system inside the website.
 
 `src/data/designSystem.ts` is the authoritative source for:
 
-- primitive colors and semantic surfaces;
+- primitive colors, semantic surfaces, and `--nl-role-*` usage tokens;
 - dark-mode colors;
 - font stacks and their roles;
 - spacing scale;
@@ -34,7 +34,7 @@ Do not create a second operational system inside the website.
 - card shadow;
 - motion timing.
 
-`BaseLayout` serializes those tokens to CSS custom properties on the document root. `global.css` maps production styles to those variables. The `/brand/` reference imports the same token objects for its labels and samples. Never maintain a separate style-guide palette.
+`BaseLayout` serializes those tokens to CSS custom properties on the document root. `global.css` maps production styles to semantic roles rather than selecting primitive swatches by appearance. The `/brand/` reference imports the same token objects for its labels and samples. Never maintain a separate style-guide palette.
 
 See `DESIGN_SYSTEM.md` for the page grammar, route-tone map, component rules, and review checklist.
 

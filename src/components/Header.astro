@@ -64,7 +64,7 @@ const navigationIcons = {
               {item.children.map((child) => {
                 const Icon = navigationIcons[child.icon];
                 return (
-                  <a class="nav-dropdown-link" href={child.href} aria-current={currentPath.startsWith(child.href) ? "page" : undefined}>
+                  <a class="nav-dropdown-link" href={child.href} aria-current={currentPath.startsWith(child.href) ? "page" : undefined} data-tone={child.tone}>
                     <span class="nav-dropdown-icon" aria-hidden="true"><Icon size={18} stroke-width={1.6} /></span>
                     <span><strong>{child.label}</strong><small>{child.description}</small></span>
                   </a>

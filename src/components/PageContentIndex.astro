@@ -1,12 +1,13 @@
 ---
 interface Props {
   sections: readonly string[];
+  tone?: "blue" | "sage" | "clay" | "gold" | "cedar";
 }
 
-const { sections } = Astro.props;
+const { sections, tone = "blue" } = Astro.props;
 ---
 
-<section class="section-shell page-content-section">
+<section class="section-shell page-content-section" data-tone={tone}>
   <div class="container-shell page-content-layout">
     <div class="page-content-intro stack">
       <p class="eyebrow">On this page</p>

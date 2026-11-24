@@ -104,12 +104,30 @@ Tone changes are semantic accents, not independent page themes:
 
 - IBM Plex Serif carries display headings and historic weight.
 - IBM Plex Sans carries readable body and interface copy at 16px minimum.
-- IBM Plex Mono is reserved for labels, navigation, technical cues, and compact actions.
+- IBM Plex Sans Medium carries primary navigation so menu labels feel clear, present, and inviting.
+- IBM Plex Mono is reserved for sparse eyebrows, labels, technical cues, and compact actions; it is not the primary-menu face.
 - Homemade Apple is a sparse human accent, never a body or interface face.
 - Paper and neutral surfaces do most of the work.
 - Blue carries the primary action and trust role.
 - Sage, clay, gold, and cedar are accents with meaning; do not use them randomly.
 - Avoid pure black, pure white, and pasted color literals.
+
+### Semantic color vocabulary
+
+Production components consume `--nl-role-*` tokens. Primitive `--nl-color-*` swatches define the palette, but they do not authorize arbitrary use.
+
+| Role | Brand color | Approved use |
+| --- | --- | --- |
+| Page / surface / text / border | Paper, surface, ink, slate, line | The neutral foundation; these should dominate every page |
+| Primary action | Blue | Links, buttons, current navigation, and interactive emphasis |
+| Action hover | Darkened blue | Hover emphasis that preserves the action's meaning |
+| Focus | Gold | Keyboard focus and orientation, never a decorative hover color |
+| Community | Sage | Belonging, growth, service, and local relationships |
+| Human story | Clay | Warmth, questions, hospitality, and lived experience |
+| Teaching | Gold | Belief, learning, significance, and careful attention |
+| Pastoral reflection | Cedar | Leadership, care, media reflection, and contemplative notes |
+
+Do not rotate accent colors by item position. Assign a semantic tone in typed data or component markup so the same subject keeps the same color meaning wherever it appears.
 
 ## Components and reuse
 

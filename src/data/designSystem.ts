@@ -26,6 +26,22 @@ export const surfaceTokens = [
   { name: "Gold wash", cssVar: "--nl-color-wash-gold", value: "#F2EBDD" },
 ] as const satisfies readonly DesignToken[];
 
+export const semanticColorTokens = [
+  { name: "Page background", cssVar: "--nl-role-page", value: "var(--nl-color-paper)", role: "Default page canvas" },
+  { name: "Raised surface", cssVar: "--nl-role-surface", value: "var(--nl-color-surface)", role: "Cards, menus, and elevated content" },
+  { name: "Primary text", cssVar: "--nl-role-text", value: "var(--nl-color-ink)", role: "Headings and body copy" },
+  { name: "Supporting text", cssVar: "--nl-role-text-soft", value: "var(--nl-color-slate)", role: "Secondary and supporting copy" },
+  { name: "Boundary", cssVar: "--nl-role-border", value: "var(--nl-color-line)", role: "Borders and dividers" },
+  { name: "Primary action", cssVar: "--nl-role-action", value: "var(--nl-color-blue)", role: "Links, buttons, and active navigation" },
+  { name: "Action hover", cssVar: "--nl-role-action-hover", value: "color-mix(in srgb, var(--nl-color-blue) 84%, var(--nl-color-ink))", role: "Interactive emphasis without changing meaning" },
+  { name: "Action wash", cssVar: "--nl-role-action-wash", value: "var(--nl-color-wash-blue)", role: "Hover and selected backgrounds" },
+  { name: "Focus", cssVar: "--nl-role-focus", value: "var(--nl-color-gold)", role: "Keyboard focus and orientation" },
+  { name: "Community", cssVar: "--nl-role-community", value: "var(--nl-color-sage)", role: "Growth, belonging, and local relationships" },
+  { name: "Human story", cssVar: "--nl-role-human", value: "var(--nl-color-clay)", role: "Warmth, questions, and lived experience" },
+  { name: "Teaching", cssVar: "--nl-role-teaching", value: "var(--nl-color-gold)", role: "Belief, significance, and learning" },
+  { name: "Pastoral reflection", cssVar: "--nl-role-reflection", value: "var(--nl-color-cedar)", role: "Leadership, care, and reflection" },
+] as const satisfies readonly DesignToken[];
+
 export const darkColorTokens = [
   { name: "Main background", cssVar: "--nl-dark-background", value: "#1F2A30" },
   { name: "Elevated surface", cssVar: "--nl-dark-surface", value: "#28343B" },
@@ -75,6 +91,7 @@ export const frameworkTokens = [
 export const allDesignTokens = [
   ...colorTokens,
   ...surfaceTokens,
+  ...semanticColorTokens,
   ...darkColorTokens,
   ...typographyTokens,
   ...spacingTokens,

@@ -3,6 +3,7 @@ import {
   colorTokens,
   darkColorTokens,
   frameworkTokens,
+  semanticColorTokens,
   spacingTokens,
   surfaceTokens,
   typographyTokens,
@@ -47,6 +48,7 @@ import Video from "@lucide/astro/icons/video";
       <div><p class="brand-label">Body large</p><p class="lead">A larger reading size for introductions and editorial emphasis.</p></div>
       <div><p class="brand-label">Body</p><p>Standard reading copy uses IBM Plex Sans Light and a generous line height.</p></div>
       <div><p class="brand-label">Small</p><p class="brand-small">Supporting detail uses IBM Plex Sans Regular for clarity.</p></div>
+      <div class="brand-type-wide"><p class="brand-label">Primary navigation</p><p class="brand-nav-sample">Visit&nbsp;&nbsp;&nbsp; About&nbsp;&nbsp;&nbsp; Faith&nbsp;&nbsp;&nbsp; Connect&nbsp;&nbsp;&nbsp; Watch</p></div>
       <div class="brand-type-wide"><p class="brand-label">Eyebrow</p><p class="eyebrow">Section label</p></div>
       <div class="brand-type-wide"><p class="brand-label">Handwritten accent</p><p class="handwritten">Questions are welcome here.</p></div>
     </div>
@@ -68,6 +70,9 @@ import Video from "@lucide/astro/icons/video";
     <div class="section-heading"><p class="eyebrow">Color</p><div class="stack"><h2>A paper-like foundation with purposeful accents.</h2><p class="lead">Every swatch is generated from the source token that also drives production CSS.</p></div></div>
     <h3 class="brand-section-title">Primary and accent palette</h3>
     <div class="three-grid brand-palette">{colorTokens.map((token) => <div class={`brand-swatch brand-swatch-${token.tone}`} style={`background:var(${token.cssVar})`}><strong>{token.name}</strong><span>{token.value}</span><code>{token.cssVar}</code></div>)}</div>
+    <h3 class="brand-section-title">Semantic color vocabulary</h3>
+    <p class="lead brand-role-intro">Components choose a role, not a favorite swatch. This layer keeps an action blue, a focus state gold, and an accent tied to the meaning of its content.</p>
+    <div class="brand-role-grid">{semanticColorTokens.map((token) => <div class="brand-role"><i style={`background:var(${token.cssVar})`}></i><span><strong>{token.name}</strong><small>{token.role}</small><code>{token.cssVar}</code></span></div>)}</div>
     <div class="brand-system-grid">
       <section class="brand-color-system light-system"><h3>Light mode system</h3><div class="token-list">{[...colorTokens.slice(0, 5), ...surfaceTokens].map((token) => <div class="token-row"><i style={`background:var(${token.cssVar})`}></i><span><strong>{token.name}</strong><small>{token.cssVar}</small></span></div>)}</div></section>
       <section class="brand-color-system dark-system"><h3>Dark mode tokens</h3><div class="token-list">{darkColorTokens.map((token) => <div class="token-row"><i style={`background:var(${token.cssVar})`}></i><span><strong>{token.name}</strong><small>{token.cssVar}</small></span></div>)}</div></section>
@@ -129,6 +134,7 @@ import Video from "@lucide/astro/icons/video";
   .brand-h3 { font-family: var(--font-heading); font-size: clamp(1.5rem, 3vw, 2.2rem); font-weight: 600; line-height: 1.1; }
   .brand-subhead { font-family: var(--font-heading); font-size: 1.5rem; font-style: italic; line-height: 1.35; }
   .brand-small { font-size: 0.875rem; font-weight: 400; }
+  .brand-nav-sample { font-family: var(--font-body); font-size: 0.82rem; font-weight: 500; letter-spacing: 0.045em; text-transform: uppercase; }
   .brand-type-wide { grid-column: 1 / -1; }
   .brand-spacing-grid { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); gap: var(--nl-space-4); }
   .spacing-list, .inset-samples { display: grid; gap: var(--nl-space-3); margin-top: var(--nl-space-5); }
@@ -140,6 +146,12 @@ import Video from "@lucide/astro/icons/video";
   .inset-24 { padding: var(--nl-space-6); } .inset-32 { padding: var(--nl-space-8); } .inset-48 { padding: var(--nl-space-12); }
   .brand-section-title { margin-bottom: var(--nl-space-5); }
   .brand-palette { margin-bottom: var(--nl-space-12); }
+  .brand-role-intro { max-width: 52rem; margin-bottom: var(--nl-space-6); }
+  .brand-role-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--nl-space-3); margin-bottom: var(--nl-space-12); }
+  .brand-role { display: grid; grid-template-columns: 3.25rem minmax(0, 1fr); gap: var(--nl-space-3); align-items: center; padding: var(--nl-space-4); border: 1px solid var(--line); border-radius: var(--nl-radius-control); background: var(--surface); }
+  .brand-role i { display: block; width: 3.25rem; height: 3.25rem; border: 1px solid color-mix(in srgb, var(--slate) 35%, transparent); border-radius: var(--nl-radius-pill); }
+  .brand-role span, .brand-role strong, .brand-role small, .brand-role code { display: block; }
+  .brand-role small { margin-block: var(--nl-space-1); color: var(--slate); font-size: 0.78rem; line-height: 1.35; }
   .brand-swatch { min-height: 10rem; padding: var(--nl-space-5); border-radius: var(--nl-radius-card); }
   .brand-swatch strong, .brand-swatch span, .brand-swatch code { display: block; }
   .brand-swatch span { margin-top: var(--nl-space-1); font-family: var(--font-mono); font-size: 0.75rem; }
@@ -160,7 +172,7 @@ import Video from "@lucide/astro/icons/video";
   .brand-panel .button-row { margin-top: var(--nl-space-5); }
   .brand-field { display: grid; gap: var(--nl-space-2); margin-top: var(--nl-space-4); color: var(--slate); font-size: 0.9rem; }
   .brand-field input { width: 100%; min-height: 3.2rem; padding: var(--nl-space-3) var(--nl-space-4); border: 1px solid var(--line); border-radius: var(--nl-radius-control); background: var(--paper); color: var(--ink); font: inherit; }
-  .brand-field input:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+  .brand-field input:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
   .brand-image-placeholder { min-height: 15rem; margin-top: var(--nl-space-4); }
   .brand-icon-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--nl-space-4); }
   .brand-icon-grid > div { display: grid; justify-items: center; gap: var(--nl-space-3); padding: var(--nl-space-6); border: 1px solid var(--line); border-radius: var(--nl-radius-card); background: var(--surface); }
@@ -171,6 +183,6 @@ import Video from "@lucide/astro/icons/video";
   .brand-icon-grid strong { font-family: var(--font-heading); }
   .brand-icon-rules { margin-top: var(--nl-space-4); }
   .brand-icon-rules ul { margin: var(--nl-space-4) 0 0; padding-left: var(--nl-space-5); color: var(--slate); }
-  @media (max-width: 900px) { .brand-token-summary, .brand-framework-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-  @media (max-width: 760px) { .brand-four-grid, .brand-type-grid, .brand-elements-grid, .brand-system-grid, .brand-spacing-grid, .brand-token-summary, .brand-framework-grid, .brand-icon-grid { grid-template-columns: 1fr; } .brand-type-wide { grid-column: auto; } }
+  @media (max-width: 900px) { .brand-token-summary, .brand-framework-grid, .brand-role-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 760px) { .brand-four-grid, .brand-type-grid, .brand-elements-grid, .brand-system-grid, .brand-spacing-grid, .brand-token-summary, .brand-framework-grid, .brand-icon-grid, .brand-role-grid { grid-template-columns: 1fr; } .brand-type-wide { grid-column: auto; } }
 </style>
