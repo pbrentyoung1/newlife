@@ -1,4 +1,16 @@
+import type { DestinationKey } from "./destinations";
+
 export type PageTone = "blue" | "sage" | "clay" | "gold" | "cedar";
+
+export type PageNextStep = {
+  eyebrow: string;
+  title: string;
+  description: string;
+  actions: readonly {
+    label: string;
+    destination: DestinationKey;
+  }[];
+};
 
 export type SitePage = {
   slug: string;
@@ -8,6 +20,7 @@ export type SitePage = {
   note: string;
   tone: PageTone;
   sections: readonly string[];
+  nextStep?: PageNextStep;
 };
 
 export const sitePages = [
@@ -21,7 +34,25 @@ export const sitePages = [
   { slug: "youth", eyebrow: "Youth", title: "Faith, friendship, and growing up", description: "A clear introduction for students and families, with current schedules and signups in Church Center.", note: "A place to belong, ask, and grow.", tone: "blue", sections: ["Who it is for", "What to expect", "Current gatherings", "Meet a leader"] },
   { slug: "preschool", eyebrow: "New Life Christian School", title: "Church and school in one community", description: "A concise introduction to the relationship between New Life and the school, with admissions and operations on the school’s website.", note: "Shared roots, clear responsibilities.", tone: "clay", sections: ["Our relationship", "For prospective families", "Tours and enrollment", "School website"] },
   { slug: "community", eyebrow: "Our community", title: "Serving Spring through real relationships", description: "Verified local partners, outward service, and the ways New Life participates in the life of our neighborhood.", note: "Good neighbors for the long haul.", tone: "sage", sections: ["Local relationships", "Serving opportunities", "Church planting", "How to participate"] },
-  { slug: "watch", eyebrow: "Sermons and live video", title: "Watch on YouTube", description: "A curated doorway to recent messages, sermon-series playlists, and New Life’s livestream—not a duplicate media archive.", note: "One clear home for every message.", tone: "cedar", sections: ["Featured series", "Recent messages", "Watch live", "YouTube channel"] },
+  {
+    slug: "watch",
+    eyebrow: "Sermons and live video",
+    title: "Watch on YouTube",
+    description: "A curated doorway to recent messages, sermon-series playlists, and New Life’s livestream—not a duplicate media archive.",
+    note: "One clear home for every message.",
+    tone: "cedar",
+    sections: ["Featured series", "Recent messages", "Watch live", "YouTube channel"],
+    nextStep: {
+      eyebrow: "New Life on YouTube",
+      title: "Live services and every sermon in one place.",
+      description: "Visit New Life’s official YouTube channel to watch a service live, browse sermon playlists, or catch up on recent messages.",
+      actions: [
+        { label: "Open YouTube", destination: "youtubeChannel" },
+        { label: "Watch live", destination: "live" },
+        { label: "Browse playlists", destination: "youtubePlaylists" },
+      ],
+    },
+  },
   { slug: "contact", eyebrow: "Contact", title: "Talk with a person", description: "Verified office contact, directions, and a clear way to ask a question before you visit.", note: "A real conversation is a good next step.", tone: "blue", sections: ["Church office", "Directions", "General questions", "Prayer requests"] },
   { slug: "privacy", eyebrow: "Privacy", title: "How this website handles information", description: "A plain-language account of analytics, external destinations, forms, and the information New Life does and does not collect.", note: "Clear, restrained, and respectful.", tone: "gold", sections: ["Website analytics", "External services", "Forms", "Contact"] },
 ] as const satisfies readonly SitePage[];

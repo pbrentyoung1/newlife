@@ -5,6 +5,7 @@ import { site } from "../data/site";
 
 const year = new Date().getFullYear();
 const facebook = destination("facebook");
+const youtube = destination("youtubeChannel");
 ---
 
 <footer class="site-footer">
@@ -28,7 +29,7 @@ const facebook = destination("facebook");
     <div class="footer-links">
       <p class="eyebrow">Elsewhere</p>
       {facebook && <a href={facebook} rel="noreferrer">Facebook</a>}
-      <a href="/watch/">YouTube</a>
+      {youtube && <a href={youtube} rel="noreferrer">YouTube</a>}
       <a href="/connect/">Church Center</a>
     </div>
   </div>

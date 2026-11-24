@@ -24,6 +24,8 @@ Updated November 24, 2026.
 - production build producing 17 routes
 - GitHub `main` connected to Hostinger Web Apps
 - Hostinger staging deployment at `https://legendary-white-clam-37.hostingersite.com/`
+- official New Life YouTube channel, livestream, playlists, and sermon archive destinations wired through shared destination data
+- shared latest-sermon feature on the homepage and at the top of the Watch page, backed by one typed media record
 - Astro build settings: Node 24.x, npm, `npm run build`, output directory `dist`
 - staging deployment verified at commit `3900399`
 - desktop and mobile layout checks, mobile navigation, hero rotation, and `/brand/` verified in the deployed build
@@ -43,7 +45,7 @@ Updated November 24, 2026.
 
 - replace visible asset placeholders with approved photography and branding
 - verify all public facts, especially Sunday time, address, parking, children, and accessibility details
-- replace pending Planning Center and YouTube destinations with approved public links
+- replace pending Planning Center destinations with approved public links
 - complete content review and accessibility QA
 - connect `www.newlifespring.org` only after explicit launch approval
 
@@ -54,5 +56,5 @@ Updated November 24, 2026.
 - verified Sunday time, address, parking, entrances, children, and accessibility details
 - current leadership names, roles, biographies, and photographs
 - verified Planning Center public destinations
-- verified YouTube channel, playlists, and livestream destinations
+- curated sermon-series metadata and approved series artwork as playlists are populated
 - current community relationships and service photography

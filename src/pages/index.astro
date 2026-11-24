@@ -1,5 +1,6 @@
 ---
 import HeroMosaic from "../components/HeroMosaic.astro";
+import LatestSermon from "../components/LatestSermon.astro";
 import PlatformSignpost from "../components/PlatformSignpost.astro";
 import { destination } from "../data/destinations";
 import { site } from "../data/site";
@@ -72,6 +73,8 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       </div>
     </div>
   </section>
+
+  <LatestSermon compact />
 
   <section class="section-shell section-blue">
     <div class="container-shell feature-split">

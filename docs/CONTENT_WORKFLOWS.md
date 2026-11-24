@@ -33,4 +33,8 @@ Update `src/data/destinations.ts` once. Components and pages should request dest
 
 ## Sermon series
 
-YouTube remains authoritative. Add one `media-series` Markdown entry for curated title, summary, artwork, alt text, playlist URL, and review date. Do not create one local Markdown file per sermon unless a future search, transcript, or editorial requirement justifies it.
+The official channel at `https://www.youtube.com/@NewLifeSpring` remains authoritative for livestreams, recordings, and playlists. The URL itself lives in `src/data/destinations.ts`; do not paste it into components. Add one `media-series` Markdown entry for each curated title, summary, artwork, alt text, playlist URL, and review date. Do not create one local Markdown file per sermon unless a future search, transcript, or editorial requirement justifies it.
+
+## Latest sermon
+
+The homepage and Watch page both render `src/components/LatestSermon.astro`. Update only the `latestSermon` record in `src/data/media.ts` after a new public sermon is verified. Copy the exact YouTube title, video ID, watch URL, public thumbnail URL, and a concise alt description. Build and confirm both `/` and `/watch/`; never update the two placements separately.

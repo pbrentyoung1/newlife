@@ -1,28 +1,41 @@
 ---
 import PageLayout from "../layouts/PageLayout.astro";
 import PageContentIndex from "../components/PageContentIndex.astro";
+import LatestSermon from "../components/LatestSermon.astro";
+import { destination } from "../data/destinations";
 import { sitePages } from "../data/pages";
 
 export function getStaticPaths() {
   return sitePages.map((page) => ({ params: { slug: page.slug }, props: page }));
 }
 
-const { eyebrow, title, description, note, tone, sections } = Astro.props;
+const { slug, eyebrow, title, description, note, tone, sections, nextStep } = Astro.props;
+const nextStepActions = nextStep
+  ? nextStep.actions.flatMap((action) => {
+      const href = destination(action.destination);
+      return href ? [{ label: action.label, href, external: true }] : [];
+    })
+  : [
+      { label: "Ask a question", href: "/contact/", external: false },
+      { label: "Return home", href: "/", external: false },
+    ];
 ---
 
 <PageLayout eyebrow={eyebrow} title={title} description={description} note={note} tone={tone}>
+  {slug === "watch" && <LatestSermon />}
   <PageContentIndex sections={sections} tone={tone} />
 
   <section class="section-shell section-blue page-next-step">
     <div class="container-shell feature-split">
       <div class="stack">
-        <p class="eyebrow">While we build</p>
-        <h2>Looking for something specific?</h2>
-        <p class="lead">The new site is still being prepared. A person can help you find the current information.</p>
+        <p class="eyebrow">{nextStep?.eyebrow ?? "While we build"}</p>
+        <h2>{nextStep?.title ?? "Looking for something specific?"}</h2>
+        <p class="lead">{nextStep?.description ?? "The new site is still being prepared. A person can help you find the current information."}</p>
       </div>
       <div class="button-row">
-        <a class="button button-on-dark" href="/contact/">Ask a question</a>
-        <a class="button-secondary button-on-dark" href="/">Return home</a>
+        {nextStepActions.map((action, index) => (
+          <a class={index === 0 ? "button button-on-dark" : "button-secondary button-on-dark"} href={action.href} rel={action.external ? "noreferrer" : undefined}>{action.label}</a>
+        ))}
       </div>
     </div>
   </section>

@@ -1,0 +1,32 @@
+---
+import Play from "@lucide/astro/icons/play";
+import { destination } from "../data/destinations";
+import { latestSermon } from "../data/media";
+
+interface Props {
+  compact?: boolean;
+}
+
+const { compact = false } = Astro.props;
+const youtube = destination("youtubeChannel");
+---
+
+<section class:list={["section-shell", "section-border", "latest-sermon", { "section-tint": compact }]} aria-labelledby={compact ? "latest-sermon-home" : "latest-sermon-watch"}>
+  <div class="container-shell latest-sermon-layout">
+    <a class="latest-sermon-media" href={latestSermon.youtubeUrl} rel="noreferrer" aria-label={`Watch ${latestSermon.title} on YouTube`}>
+      <img src={latestSermon.thumbnailUrl} alt={latestSermon.thumbnailAlt} width="480" height="360" loading={compact ? "lazy" : "eager"} />
+      <span class="latest-sermon-play" aria-hidden="true"><Play size={24} stroke-width={1.7} fill="currentColor" /></span>
+    </a>
+    <div class="stack-lg latest-sermon-copy">
+      <div class="stack">
+        <p class="eyebrow">Latest sermon</p>
+        <h2 id={compact ? "latest-sermon-home" : "latest-sermon-watch"}>{latestSermon.title}</h2>
+        <p class="lead">{latestSermon.summary}</p>
+      </div>
+      <div class="button-row">
+        <a class="button" href={latestSermon.youtubeUrl} rel="noreferrer">Watch the sermon</a>
+        {youtube && <a class="button-secondary" href={youtube} rel="noreferrer">Visit YouTube</a>}
+      </div>
+    </div>
+  </div>
+</section>

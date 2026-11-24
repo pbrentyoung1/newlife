@@ -536,6 +536,48 @@ h3 { font-size: clamp(1.35rem, 2vw, 1.75rem); }
 .platform-signpost h3 { margin-top: 0.5rem; }
 .platform-signpost > p:not(.eyebrow) { margin-top: 1rem; color: var(--slate); }
 
+.latest-sermon-layout {
+  display: grid;
+  grid-template-columns: minmax(18rem, 0.9fr) minmax(0, 1.1fr);
+  gap: clamp(var(--nl-space-8), 7vw, 6rem);
+  align-items: center;
+}
+
+.latest-sermon-media {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  border-radius: var(--nl-radius-image);
+  background: var(--dark-deep);
+  box-shadow: var(--shadow);
+}
+
+.latest-sermon-media img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  transition: opacity var(--nl-motion-fast) ease, transform var(--nl-motion-standard) ease;
+}
+
+.latest-sermon-media:hover img { opacity: 0.82; transform: scale(1.015); }
+.latest-sermon-play {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: grid;
+  width: 4rem;
+  height: 4rem;
+  place-items: center;
+  border-radius: var(--nl-radius-pill);
+  background: color-mix(in srgb, var(--paper) 92%, transparent);
+  color: var(--action);
+  transform: translate(-50%, -50%);
+  transition: background var(--nl-motion-fast) ease, transform var(--nl-motion-fast) ease;
+}
+.latest-sermon-media:hover .latest-sermon-play { background: var(--paper); transform: translate(-50%, -50%) scale(1.05); }
+.latest-sermon-copy h2 { max-width: 14ch; }
+.latest-sermon-copy .lead { max-width: 38rem; }
+
 .page-hero {
   position: relative;
   overflow: hidden;
@@ -661,6 +703,7 @@ h3 { font-size: clamp(1.35rem, 2vw, 1.75rem); }
   .primary-navigation .nav-action { width: 100%; margin-left: 0; justify-content: center; }
   .hero-layout,
   .feature-split,
+  .latest-sermon-layout,
   .page-hero-layout,
   .page-content-layout { grid-template-columns: 1fr; }
   .hero-mosaic { min-height: 36rem; }

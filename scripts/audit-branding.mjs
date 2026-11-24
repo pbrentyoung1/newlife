@@ -58,6 +58,17 @@ if (/nav-dropdown-link:nth-child/.test(globalCss) || /page-content-item:nth-chil
   errors.push("src/styles/global.css: accent colors must follow semantic tones, not item position.");
 }
 
+const homeHtml = await readFile(join(dist, "index.html"), "utf8");
+const watchHtml = await readFile(join(dist, "watch/index.html"), "utf8");
+const latestSermonTitle = "The Letters: A Life Transformed by Grace";
+const youtubeChannel = "https://www.youtube.com/@NewLifeSpring";
+
+if (!homeHtml.includes(latestSermonTitle)) errors.push("index.html: shared latest-sermon feature is missing.");
+if (!watchHtml.includes(latestSermonTitle)) errors.push("watch/index.html: latest sermon is missing from the Watch page.");
+if (!homeHtml.includes(youtubeChannel) || !watchHtml.includes(youtubeChannel)) {
+  errors.push("YouTube channel destination is missing from the homepage or Watch page.");
+}
+
 if (errors.length) {
   console.error("Brand audit failed:\n");
   for (const error of errors) console.error(`- ${error}`);

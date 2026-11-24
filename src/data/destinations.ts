@@ -5,9 +5,9 @@ export const destinations = {
   churchCenterEvents: "",
   churchCenterGroups: "",
   churchCenterConnect: "",
-  youtubeChannel: "",
-  youtubePlaylists: "",
-  live: "https://live.newlifespring.org",
+  youtubeChannel: "https://www.youtube.com/@NewLifeSpring",
+  youtubePlaylists: "https://www.youtube.com/@NewLifeSpring/playlists",
+  live: "https://www.youtube.com/@NewLifeSpring/live",
   school: "https://www.newlifeccs.org",
   facebook: "https://www.facebook.com/newlifecrc",
 } as const;

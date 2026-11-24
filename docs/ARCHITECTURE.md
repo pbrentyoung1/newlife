@@ -18,6 +18,7 @@ Do not create a second operational system inside the website.
 - `PageContentIndex` owns the standard editorial index used while interior content is prepared.
 - Pages compose sections; they do not redefine global church facts or design tokens.
 - `src/data/pages.ts` owns route-level titles, descriptions, human notes, semantic tones, and section scope.
+- `src/data/media.ts` owns the single current latest-sermon record reused by the homepage and Watch page.
 - Content entries own durable editorial copy.
 - Typed data modules own repeated facts and destinations.
 
