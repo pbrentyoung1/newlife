@@ -12,6 +12,7 @@ Updated November 24, 2026.
 - New Life design tokens and living brand reference
 - semantic color roles that keep actions, focus, community, human story, teaching, and pastoral reflection consistent across components
 - IBM Plex Sans Medium for primary navigation; Plex Mono reserved for sparse editorial and technical cues
+- shared word-spacing for Homemade Apple accents so multiword phrases remain clearly readable
 - animated still-image hero with three themes, five unequal cards, four reviewed composition presets, and non-repeating random theme/layout selection
 - reduced-motion and hidden-page behavior
 - mission-facing homepage wireframe

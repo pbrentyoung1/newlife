@@ -107,6 +107,7 @@ Tone changes are semantic accents, not independent page themes:
 - IBM Plex Sans Medium carries primary navigation so menu labels feel clear, present, and inviting.
 - IBM Plex Mono is reserved for sparse eyebrows, labels, technical cues, and compact actions; it is not the primary-menu face.
 - Homemade Apple is a sparse human accent, never a body or interface face.
+- Homemade Apple uses the shared `--nl-font-hand-word-spacing` token so connected script never visually closes the space between words.
 - Paper and neutral surfaces do most of the work.
 - Blue carries the primary action and trust role.
 - Sage, clay, gold, and cedar are accents with meaning; do not use them randomly.

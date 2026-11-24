@@ -60,6 +60,7 @@ export const typographyTokens = [
   { name: "Body", cssVar: "--nl-font-body", value: '"IBM Plex Sans", Arial, sans-serif', role: "Reading and interface copy" },
   { name: "Label", cssVar: "--nl-font-mono", value: '"IBM Plex Mono", monospace', role: "Eyebrows and technical cues" },
   { name: "Human accent", cssVar: "--nl-font-hand", value: '"Homemade Apple", cursive', role: "Restrained handwritten emphasis" },
+  { name: "Human accent word spacing", cssVar: "--nl-font-hand-word-spacing", value: "0.3em", role: "Keeps script phrases visibly separated" },
 ] as const satisfies readonly DesignToken[];
 
 export const spacingTokens = [
