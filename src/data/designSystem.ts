@@ -63,7 +63,10 @@ export const spacingTokens = [
 export const frameworkTokens = [
   { name: "Content width", cssVar: "--nl-layout-content", value: "76rem" },
   { name: "Reading width", cssVar: "--nl-layout-reading", value: "46rem" },
-  { name: "Control radius", cssVar: "--nl-radius-control", value: "0.25rem" },
+  { name: "Control radius", cssVar: "--nl-radius-control", value: "0.625rem" },
+  { name: "Card radius", cssVar: "--nl-radius-card", value: "1rem" },
+  { name: "Image radius", cssVar: "--nl-radius-image", value: "0.875rem" },
+  { name: "Pill radius", cssVar: "--nl-radius-pill", value: "999px" },
   { name: "Card shadow", cssVar: "--nl-shadow-card", value: "0 18px 45px rgb(62 71 77 / 0.1)" },
   { name: "Motion fast", cssVar: "--nl-motion-fast", value: "240ms" },
   { name: "Motion-standard", cssVar: "--nl-motion-standard", value: "420ms" },

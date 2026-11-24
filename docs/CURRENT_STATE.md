@@ -6,6 +6,9 @@ Updated November 24, 2026.
 
 - Astro static foundation and strict TypeScript configuration
 - shared header and footer
+- inviting pill-based primary navigation with accessible About and Connect dropdowns
+- semantic corner-radius tokens for controls, cards, images, and pills
+- `@lucide/astro` established as the sole production icon library and demonstrated on the living brand reference
 - New Life design tokens and living brand reference
 - animated still-image hero with three themes, five unequal cards, four reviewed composition presets, and non-repeating random theme/layout selection
 - reduced-motion and hidden-page behavior

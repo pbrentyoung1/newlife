@@ -45,6 +45,38 @@ The homepage and brand reference use `BaseLayout` directly because their composi
 | Route title, description, human note, tone, and planned sections | `src/data/pages.ts` |
 | Visual reference and rendered token labels | `src/components/BrandReference.astro` |
 
+## Geometry
+
+Corner shape is controlled by semantic framework tokens, not local literals:
+
+- `--nl-radius-control` softens buttons and fields without turning them into pills;
+- `--nl-radius-card` gives cards and dropdown panels a warmer editorial container;
+- `--nl-radius-image` softens photography and mosaic frames;
+- `--nl-radius-pill` is reserved for navigation states, icon discs, tags, and true pill controls.
+
+The system should feel approachable, not bubbly. Large structural sections remain square to preserve the editorial page rhythm.
+
+## Navigation system
+
+- Primary navigation labels use animated wash-colored background pills for hover and current-section states.
+- About and Connect own the only desktop dropdowns. Their children come from `src/data/navigation.ts`; do not duplicate dropdown markup in `Header.astro`.
+- Dropdowns use a rounded surface, quiet shadow, short fade/slide transition, visible text, and a supporting icon.
+- Desktop dropdowns open on hover, keyboard focus, or disclosure-button activation.
+- Mobile dropdowns become explicit expandable groups inside the main menu.
+- Disclosure buttons expose `aria-expanded`, Escape closes open navigation, and clicking outside closes desktop dropdowns.
+- Reduced-motion preferences collapse transitions through the global motion rule.
+
+## Icon library
+
+Use the maintained `@lucide/astro` package exclusively.
+
+- Import individual icons directly from `@lucide/astro/icons/<name>` so the static build includes only what is used.
+- Use a 1.6–1.75 stroke unless a legibility test requires otherwise.
+- Use `currentColor`; color meaning comes from the surrounding component.
+- Pair navigational icons with visible labels. Do not use an icon alone when its meaning is essential.
+- Mark supporting icons `aria-hidden="true"`.
+- Do not mix Lucide with Font Awesome, Material Symbols, emoji, or one-off SVG drawing styles.
+
 Never copy a color, font stack, shadow, radius, or motion duration into a page. Change its token in `designSystem.ts` and consume the semantic CSS variable. The only inline styles permitted are on the brand reference itself where a token is being rendered as data, and on the document root where `BaseLayout` publishes the token set.
 
 ## Page grammar
@@ -82,6 +114,7 @@ Tone changes are semantic accents, not independent page themes:
 ## Components and reuse
 
 - Header, footer, buttons, page heroes, content indexes, platform signposts, and hero mosaic behavior are shared components or shared semantic classes.
+- Navigation groups, dropdown labels, descriptions, destinations, and icon keys are defined in `src/data/navigation.ts`.
 - Page files compose components and content; they do not redefine the design system.
 - When a pattern appears twice, first decide whether it belongs in `global.css`, a component, or typed data.
 - A page-specific class may control composition. It may not introduce a new palette, font, button style, shadow, or radius.

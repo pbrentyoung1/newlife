@@ -1,8 +1,27 @@
 ---
 import { primaryNavigation } from "../data/navigation";
 import { site } from "../data/site";
+import ChevronDown from "@lucide/astro/icons/chevron-down";
+import Church from "@lucide/astro/icons/church";
+import BookOpenText from "@lucide/astro/icons/book-open-text";
+import UsersRound from "@lucide/astro/icons/users-round";
+import HeartHandshake from "@lucide/astro/icons/heart-handshake";
+import Baby from "@lucide/astro/icons/baby";
+import GraduationCap from "@lucide/astro/icons/graduation-cap";
+import School from "@lucide/astro/icons/school";
+import HandHeart from "@lucide/astro/icons/hand-heart";
 
 const currentPath = Astro.url.pathname;
+const navigationIcons = {
+  church: Church,
+  book: BookOpenText,
+  users: UsersRound,
+  heart: HeartHandshake,
+  child: Baby,
+  youth: GraduationCap,
+  school: School,
+  serve: HandHeart,
+} as const;
 ---
 
 <header class="site-header" data-site-header>
@@ -18,11 +37,47 @@ const currentPath = Astro.url.pathname;
     </button>
 
     <nav id="primary-navigation" class="primary-navigation" aria-label="Primary navigation" data-primary-navigation>
-      {primaryNavigation.map((item) => (
-        <a href={item.href} aria-current={currentPath.startsWith(item.href) ? "page" : undefined}>
-          {item.label}
-        </a>
-      ))}
+      {primaryNavigation.map((item, index) => {
+        const hasChildren = "children" in item;
+        const childIsCurrent = hasChildren && item.children.some((child) => currentPath.startsWith(child.href));
+        const isCurrent = currentPath.startsWith(item.href) || childIsCurrent;
+        const submenuId = `navigation-submenu-${index}`;
+
+        return hasChildren ? (
+          <div class="nav-group" data-nav-group>
+            <div class="nav-group-trigger">
+              <a class="nav-pill" href={item.href} aria-current={currentPath.startsWith(item.href) ? "page" : undefined} data-section-current={isCurrent ? "" : undefined}>
+                {item.label}
+              </a>
+              <button
+                class="nav-disclosure"
+                type="button"
+                aria-expanded="false"
+                aria-controls={submenuId}
+                aria-label={`Open ${item.label} menu`}
+                data-nav-disclosure
+              >
+                <ChevronDown size={15} stroke-width={1.75} aria-hidden="true" />
+              </button>
+            </div>
+            <div id={submenuId} class="nav-dropdown" role="group" aria-label={`${item.label} links`} data-nav-dropdown>
+              {item.children.map((child) => {
+                const Icon = navigationIcons[child.icon];
+                return (
+                  <a class="nav-dropdown-link" href={child.href} aria-current={currentPath.startsWith(child.href) ? "page" : undefined}>
+                    <span class="nav-dropdown-icon" aria-hidden="true"><Icon size={18} stroke-width={1.6} /></span>
+                    <span><strong>{child.label}</strong><small>{child.description}</small></span>
+                  </a>
+                );
+              })}
+            </div>
+          </div>
+        ) : (
+          <a class="nav-pill" href={item.href} aria-current={isCurrent ? "page" : undefined}>
+            {item.label}
+          </a>
+        );
+      })}
       <a class="nav-action" href="/visit/">Plan a visit</a>
     </nav>
   </div>
@@ -31,10 +86,42 @@ const currentPath = Astro.url.pathname;
 <script>
   const toggle = document.querySelector<HTMLButtonElement>("[data-menu-toggle]");
   const navigation = document.querySelector<HTMLElement>("[data-primary-navigation]");
+  const groups = Array.from(document.querySelectorAll<HTMLElement>("[data-nav-group]"));
+
+  const closeGroups = (except?: HTMLElement) => {
+    groups.forEach((group) => {
+      if (group === except) return;
+      group.removeAttribute("data-open");
+      group.querySelector<HTMLButtonElement>("[data-nav-disclosure]")?.setAttribute("aria-expanded", "false");
+    });
+  };
 
   toggle?.addEventListener("click", () => {
     const open = toggle.getAttribute("aria-expanded") === "true";
     toggle.setAttribute("aria-expanded", String(!open));
     navigation?.toggleAttribute("data-open", !open);
+    if (open) closeGroups();
+  });
+
+  groups.forEach((group) => {
+    const disclosure = group.querySelector<HTMLButtonElement>("[data-nav-disclosure]");
+    disclosure?.addEventListener("click", () => {
+      const open = group.hasAttribute("data-open");
+      closeGroups(group);
+      group.toggleAttribute("data-open", !open);
+      disclosure.setAttribute("aria-expanded", String(!open));
+    });
+  });
+
+  document.addEventListener("click", (event) => {
+    if (!(event.target instanceof Node) || navigation?.contains(event.target)) return;
+    closeGroups();
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape") return;
+    closeGroups();
+    toggle?.setAttribute("aria-expanded", "false");
+    navigation?.removeAttribute("data-open");
   });
 </script>

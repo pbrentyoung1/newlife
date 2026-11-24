@@ -36,6 +36,7 @@ Search indexing is intentionally disabled until launch approval.
 - Design changes: `src/data/designSystem.ts`
 - Church/site facts: `src/data/site.ts`
 - Navigation: `src/data/navigation.ts`
+- Production icons: direct imports from `@lucide/astro/icons/*`
 - External destinations: `src/data/destinations.ts`
 - Hero themes: `src/data/heroGallery.ts`
 - Interior page vocabulary and scope: `src/data/pages.ts`

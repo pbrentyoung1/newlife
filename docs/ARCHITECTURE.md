@@ -13,7 +13,7 @@ Do not create a second operational system inside the website.
 
 - `BaseLayout` owns metadata, global design variables, header, and footer.
 - `PageLayout` owns the shared editorial hero grammar for interior routes.
-- `Header` and `Footer` consume shared navigation and site data.
+- `Header` and `Footer` consume shared navigation and site data. `Header` owns the accessible pill and dropdown interaction; `src/data/navigation.ts` owns its hierarchy and icon keys.
 - `HeroMosaic` owns the animated still-image composition and reduced-motion behavior.
 - `PageContentIndex` owns the standard editorial index used while interior content is prepared.
 - Pages compose sections; they do not redefine global church facts or design tokens.

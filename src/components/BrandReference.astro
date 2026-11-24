@@ -7,6 +7,10 @@ import {
   surfaceTokens,
   typographyTokens,
 } from "../data/designSystem";
+import Compass from "@lucide/astro/icons/compass";
+import Church from "@lucide/astro/icons/church";
+import HeartHandshake from "@lucide/astro/icons/heart-handshake";
+import Video from "@lucide/astro/icons/video";
 ---
 
 <section class="page-hero">
@@ -78,6 +82,22 @@ import {
   </div>
 </section>
 
+<section class="section-shell section-border" id="iconography">
+  <div class="container-shell">
+    <div class="section-heading"><p class="eyebrow">Iconography</p><div class="stack"><h2>Lucide, used as a quiet navigational cue.</h2><p class="lead">The maintained <code>@lucide/astro</code> library is the only production icon source. Its open forms and rounded strokes complement the type system without becoming decorative.</p></div></div>
+    <div class="brand-icon-grid">
+      <div><span><Compass size={24} stroke-width={1.6} aria-hidden="true" /></span><strong>Explore</strong></div>
+      <div><span><Church size={24} stroke-width={1.6} aria-hidden="true" /></span><strong>Church</strong></div>
+      <div><span><HeartHandshake size={24} stroke-width={1.6} aria-hidden="true" /></span><strong>Connect</strong></div>
+      <div><span><Video size={24} stroke-width={1.6} aria-hidden="true" /></span><strong>Media</strong></div>
+    </div>
+    <div class="two-grid brand-icon-rules">
+      <article class="brand-panel"><h3>Production rules</h3><ul><li>Default to a 1.6–1.75 stroke</li><li>Use <code>currentColor</code></li><li>Pair icons with visible text in navigation</li><li>Mark supporting icons <code>aria-hidden="true"</code></li></ul></article>
+      <article class="brand-panel"><h3>Do not mix libraries</h3><p>Do not add Font Awesome, Material Symbols, emoji, or one-off SVG styles. Add a Lucide icon by direct import so the static build includes only what the page uses.</p></article>
+    </div>
+  </div>
+</section>
+
 <section class="section-shell section-border" id="elements">
   <div class="container-shell">
     <div class="section-heading"><p class="eyebrow">Elements</p><div class="stack"><h2>Production components, not a separate style board.</h2><p class="lead">These examples use the same classes, tokens, and accessibility rules as the website.</p></div></div>
@@ -95,7 +115,7 @@ import {
 <style>
   .brand-four-grid, .brand-type-grid, .brand-elements-grid, .brand-system-grid, .brand-framework-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--nl-space-4); }
   .brand-framework-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .brand-note, .brand-panel, .brand-type-grid > div { padding: clamp(var(--nl-space-5), 3vw, var(--nl-space-8)); border: 1px solid var(--line); background: var(--surface); box-shadow: var(--shadow); }
+  .brand-note, .brand-panel, .brand-type-grid > div { padding: clamp(var(--nl-space-5), 3vw, var(--nl-space-8)); border: 1px solid var(--line); border-radius: var(--nl-radius-card); background: var(--surface); box-shadow: var(--shadow); }
   .brand-note ul, .brand-motion ul { margin: var(--nl-space-4) 0 0; padding-left: var(--nl-space-5); color: var(--slate); }
   .brand-token-summary { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--nl-space-3); margin-bottom: var(--nl-space-6); }
   .brand-token-summary > div { padding: var(--nl-space-4); border-top: 3px solid var(--blue); background: var(--wash-blue); }
@@ -120,13 +140,13 @@ import {
   .inset-24 { padding: var(--nl-space-6); } .inset-32 { padding: var(--nl-space-8); } .inset-48 { padding: var(--nl-space-12); }
   .brand-section-title { margin-bottom: var(--nl-space-5); }
   .brand-palette { margin-bottom: var(--nl-space-12); }
-  .brand-swatch { min-height: 10rem; padding: var(--nl-space-5); }
+  .brand-swatch { min-height: 10rem; padding: var(--nl-space-5); border-radius: var(--nl-radius-card); }
   .brand-swatch strong, .brand-swatch span, .brand-swatch code { display: block; }
   .brand-swatch span { margin-top: var(--nl-space-1); font-family: var(--font-mono); font-size: 0.75rem; }
   .brand-swatch code { margin-top: var(--nl-space-2); color: currentColor; opacity: 0.8; }
   .brand-swatch-dark { color: var(--paper); }
   .brand-swatch-light { color: var(--ink); border: 1px solid var(--line); }
-  .brand-color-system { padding: var(--nl-space-8); border: 1px solid var(--line); }
+  .brand-color-system { padding: var(--nl-space-8); border: 1px solid var(--line); border-radius: var(--nl-radius-card); }
   .light-system { background: var(--surface); }
   .dark-system { border-color: var(--dark-border); background: var(--dark-background); color: var(--dark-text); }
   .dark-system h3, .dark-system strong { color: var(--dark-text); }
@@ -142,6 +162,15 @@ import {
   .brand-field input { width: 100%; min-height: 3.2rem; padding: var(--nl-space-3) var(--nl-space-4); border: 1px solid var(--line); border-radius: var(--nl-radius-control); background: var(--paper); color: var(--ink); font: inherit; }
   .brand-field input:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
   .brand-image-placeholder { min-height: 15rem; margin-top: var(--nl-space-4); }
+  .brand-icon-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--nl-space-4); }
+  .brand-icon-grid > div { display: grid; justify-items: center; gap: var(--nl-space-3); padding: var(--nl-space-6); border: 1px solid var(--line); border-radius: var(--nl-radius-card); background: var(--surface); }
+  .brand-icon-grid span { display: grid; width: 3.5rem; height: 3.5rem; place-items: center; border-radius: var(--nl-radius-pill); background: var(--wash-blue); color: var(--blue); }
+  .brand-icon-grid > div:nth-child(2) span { background: var(--wash-sage); color: var(--sage); }
+  .brand-icon-grid > div:nth-child(3) span { background: var(--wash-clay); color: var(--cedar); }
+  .brand-icon-grid > div:nth-child(4) span { background: var(--wash-gold); color: color-mix(in srgb, var(--gold) 68%, var(--ink)); }
+  .brand-icon-grid strong { font-family: var(--font-heading); }
+  .brand-icon-rules { margin-top: var(--nl-space-4); }
+  .brand-icon-rules ul { margin: var(--nl-space-4) 0 0; padding-left: var(--nl-space-5); color: var(--slate); }
   @media (max-width: 900px) { .brand-token-summary, .brand-framework-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-  @media (max-width: 760px) { .brand-four-grid, .brand-type-grid, .brand-elements-grid, .brand-system-grid, .brand-spacing-grid, .brand-token-summary, .brand-framework-grid { grid-template-columns: 1fr; } .brand-type-wide { grid-column: auto; } }
+  @media (max-width: 760px) { .brand-four-grid, .brand-type-grid, .brand-elements-grid, .brand-system-grid, .brand-spacing-grid, .brand-token-summary, .brand-framework-grid, .brand-icon-grid { grid-template-columns: 1fr; } .brand-type-wide { grid-column: auto; } }
 </style>
