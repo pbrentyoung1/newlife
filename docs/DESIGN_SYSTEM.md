@@ -40,6 +40,8 @@ The homepage and brand reference use `BaseLayout` directly because their composi
 | Sitewide metadata, header, and footer | `src/layouts/BaseLayout.astro` |
 | Interior-page hero composition | `src/layouts/PageLayout.astro` |
 | Interior-page section index | `src/components/PageContentIndex.astro` |
+| Homepage hero themes, timing, and irregular composition presets | `src/data/heroGallery.ts` |
+| Homepage hero transition and random-selection behavior | `src/components/HeroMosaic.astro` |
 | Route title, description, human note, tone, and planned sections | `src/data/pages.ts` |
 | Visual reference and rendered token labels | `src/components/BrandReference.astro` |
 
@@ -90,7 +92,11 @@ Tone changes are semantic accents, not independent page themes:
 
 - Use real New Life people, spaces, worship, meals, and neighborhood service when permissions allow.
 - Still-image mosaics are the preferred hero motion language.
+- The homepage mosaic uses five unequal cards and several approved composition presets. Theme and layout are selected independently without immediately repeating either one.
+- Cards leave and arrive in a staggered sequence with a short visual beat between states. Keep the interval slow enough that the visitor can read the hero before it changes.
+- Layout randomness must choose from reviewed presets in `heroGallery.ts`; do not generate unconstrained positions that can collide, overflow, or obscure copy.
 - Motion must preserve layout, pause while the page is hidden, and respect `prefers-reduced-motion`.
+- Reduced-motion visitors receive the stable default composition with no automatic cycling.
 - Placeholder blocks must remain visibly labeled until an approved asset replaces them.
 - Every meaningful image needs descriptive alt text; decorative images use empty alt text.
 
@@ -117,6 +123,7 @@ Before merging a new page or design change:
 - [ ] The next step points to the website, Planning Center, YouTube, or the school according to the architecture boundary.
 - [ ] Desktop and 390px mobile widths have no horizontal overflow.
 - [ ] Keyboard focus, navigation, and reduced motion still work.
+- [ ] Hero presets remain legible at desktop and 390px mobile widths, with no repeated theme or layout on an automatic transition.
 - [ ] Canonical metadata and prelaunch robots directives are correct.
 - [ ] `/brand/`, `/`, and a representative interior route still render correctly.
 - [ ] `npm run build`, `npm run audit:brand`, and `git diff --check` pass.

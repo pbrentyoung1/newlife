@@ -7,7 +7,7 @@ Updated November 24, 2026.
 - Astro static foundation and strict TypeScript configuration
 - shared header and footer
 - New Life design tokens and living brand reference
-- animated still-image hero with three themes
+- animated still-image hero with three themes, five unequal cards, four reviewed composition presets, and non-repeating random theme/layout selection
 - reduced-motion and hidden-page behavior
 - mission-facing homepage wireframe
 - branded interior sitemap routes with typed semantic tones and human accent notes

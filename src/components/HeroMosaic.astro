@@ -4,15 +4,22 @@ import { heroGallery } from "../data/heroGallery";
 const initialTheme = heroGallery.themes.find((theme) => theme.id === heroGallery.defaultTheme) ?? heroGallery.themes[0];
 ---
 
-<div class="hero-mosaic" data-hero-mosaic data-interval={heroGallery.intervalMs}>
+<div
+  class="hero-mosaic"
+  data-hero-mosaic
+  data-interval={heroGallery.intervalMs}
+  data-exit-duration={heroGallery.transitionMs.exit}
+  data-beat-duration={heroGallery.transitionMs.beat}
+  data-enter-duration={heroGallery.transitionMs.enter}
+>
   <div class="mosaic-heading">
-    <p class="handwritten" data-theme-label>{initialTheme.label}</p>
-    <p class="mosaic-description" data-theme-description>{initialTheme.description}</p>
+    <p class="handwritten mosaic-copy mosaic-in" data-theme-label>{initialTheme.label}</p>
+    <p class="mosaic-description mosaic-copy mosaic-in" data-theme-description>{initialTheme.description}</p>
   </div>
 
   <div class="mosaic-grid" data-theme-accent={initialTheme.accent} aria-live="off">
     {initialTheme.imageLabels.map((label, index) => (
-      <figure class={`mosaic-tile mosaic-tile-${index + 1}`} data-mosaic-tile>
+      <figure class={`mosaic-tile mosaic-tile-${index + 1} mosaic-in`} data-mosaic-tile data-card-index={index}>
         <div class="mosaic-placeholder" role="img" aria-label={`${label} photography placeholder`}>
           <span>{label}</span>
         </div>
@@ -33,56 +40,126 @@ const initialTheme = heroGallery.themes.find((theme) => theme.id === heroGallery
   </div>
 </div>
 
-<script define:vars={{ themes: heroGallery.themes }}>
+<script define:vars={{ themes: heroGallery.themes, layouts: heroGallery.layouts, defaultTheme: heroGallery.defaultTheme }}>
   const root = document.querySelector("[data-hero-mosaic]");
   const label = root?.querySelector("[data-theme-label]");
   const description = root?.querySelector("[data-theme-description]");
   const grid = root?.querySelector(".mosaic-grid");
-  const tiles = root?.querySelectorAll("[data-mosaic-tile] .mosaic-placeholder");
+  const tiles = Array.from(root?.querySelectorAll("[data-mosaic-tile]") ?? []);
   const controls = root?.querySelectorAll("[data-theme-index]");
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-  let activeIndex = 0;
+  const defaultThemeIndex = Math.max(0, themes.findIndex((theme) => theme.id === defaultTheme));
+  let activeIndex = defaultThemeIndex;
+  let activeLayoutIndex = 0;
+  let transitioning = false;
   let timer;
 
-  const render = (index) => {
-    const theme = themes[index];
+  const pickNextIndex = (length, previous) => {
+    if (length <= 1) return 0;
+    let next = Math.floor(Math.random() * length);
+    while (next === previous) next = Math.floor(Math.random() * length);
+    return next;
+  };
+
+  const applyState = (themeIndex, layoutIndex) => {
+    const theme = themes[themeIndex];
+    const layout = layouts[layoutIndex];
     if (!theme || !root) return;
 
+    if (label) label.textContent = theme.label;
+    if (description) description.textContent = theme.description;
+    if (grid) grid.setAttribute("data-theme-accent", theme.accent);
+
+    tiles.forEach((tile, tileIndex) => {
+      const preset = layout?.[tileIndex];
+      const text = theme.imageLabels[tileIndex];
+      const textNode = tile.querySelector("span");
+      const placeholder = tile.querySelector(".mosaic-placeholder");
+
+      if (preset && tile instanceof HTMLElement) {
+        tile.style.left = preset.x;
+        tile.style.top = preset.y;
+        tile.style.width = preset.width;
+        tile.style.zIndex = preset.z;
+        tile.style.setProperty("--tile-height", preset.height);
+        tile.style.setProperty("--card-rotation", preset.rotation);
+      }
+      if (textNode) textNode.textContent = text;
+      if (placeholder) placeholder.setAttribute("aria-label", `${text} photography placeholder`);
+    });
+
+    controls?.forEach((control, controlIndex) => {
+      control.setAttribute("aria-pressed", String(controlIndex === themeIndex));
+    });
+    activeIndex = themeIndex;
+    activeLayoutIndex = layoutIndex;
+  };
+
+  const showImmediately = (themeIndex, layoutIndex) => {
+    applyState(themeIndex, layoutIndex);
+    [...tiles, label, description].forEach((item) => {
+      item?.classList.remove("mosaic-out");
+      item?.classList.add("mosaic-in");
+    });
+  };
+
+  const transitionTo = (themeIndex, layoutIndex) => {
+    if (transitioning || !root) return;
+    if (reducedMotion.matches) {
+      showImmediately(themeIndex, 0);
+      return;
+    }
+
+    transitioning = true;
     root.setAttribute("data-changing", "");
+    [...tiles, label, description].forEach((item) => {
+      item?.classList.remove("mosaic-in");
+      item?.classList.add("mosaic-out");
+    });
+
+    const exitDuration = Number(root.getAttribute("data-exit-duration")) || 520;
+    const beatDuration = Number(root.getAttribute("data-beat-duration")) || 240;
+    const enterDuration = Number(root.getAttribute("data-enter-duration")) || 760;
+
     window.setTimeout(() => {
-      if (label) label.textContent = theme.label;
-      if (description) description.textContent = theme.description;
-      if (grid) grid.setAttribute("data-theme-accent", theme.accent);
-      tiles?.forEach((tile, tileIndex) => {
-        const text = theme.imageLabels[tileIndex];
-        const textNode = tile.querySelector("span");
-        if (textNode) textNode.textContent = text;
-        tile.setAttribute("aria-label", `${text} photography placeholder`);
+      applyState(themeIndex, layoutIndex);
+      tiles.forEach((tile) => void tile.offsetWidth);
+      [...tiles, label, description].forEach((item) => {
+        item?.classList.remove("mosaic-out");
+        item?.classList.add("mosaic-in");
       });
-      controls?.forEach((control, controlIndex) => {
-        control.setAttribute("aria-pressed", String(controlIndex === index));
-      });
-      activeIndex = index;
       root.removeAttribute("data-changing");
-    }, reducedMotion.matches ? 0 : 240);
+      window.setTimeout(() => { transitioning = false; }, enterDuration);
+    }, exitDuration + beatDuration);
+  };
+
+  const cycle = () => {
+    const nextTheme = pickNextIndex(themes.length, activeIndex);
+    const nextLayout = pickNextIndex(layouts.length, activeLayoutIndex);
+    transitionTo(nextTheme, nextLayout);
   };
 
   const stop = () => window.clearInterval(timer);
   const start = () => {
     stop();
     if (reducedMotion.matches || document.hidden) return;
-    const interval = Number(root?.getAttribute("data-interval")) || 6500;
-    timer = window.setInterval(() => render((activeIndex + 1) % themes.length), interval);
+    const interval = Number(root?.getAttribute("data-interval")) || 15000;
+    timer = window.setInterval(cycle, interval);
   };
 
   controls?.forEach((control) => {
     control.addEventListener("click", () => {
-      render(Number(control.getAttribute("data-theme-index")));
+      const requestedTheme = Number(control.getAttribute("data-theme-index"));
+      const nextLayout = pickNextIndex(layouts.length, activeLayoutIndex);
+      transitionTo(requestedTheme, nextLayout);
       start();
     });
   });
 
+  reducedMotion.addEventListener("change", () => {
+    if (reducedMotion.matches) showImmediately(activeIndex, 0);
+    start();
+  });
   document.addEventListener("visibilitychange", start);
-  reducedMotion.addEventListener("change", start);
   start();
 </script>
