@@ -35,32 +35,39 @@ try {
   source = await connect("EDITORIAL", sourceName);
   await source.query("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ");
   await source.query("START TRANSACTION WITH CONSISTENT SNAPSHOT, READ ONLY");
-  const [sermons] = await source.query(
-    "SELECT id, slug, youtube_video_id, title, summary, preached_on, speaker_name, series_title FROM public_sermons",
-  );
-  const [scripture] = await source.query(
-    "SELECT sermon_id, sort_order, citation FROM public_sermon_scripture",
-  );
+  const sermonQuery =
+    "SELECT id, slug, youtube_video_id, title, summary, preached_on, speaker_name, series_title FROM public_sermons ORDER BY id";
+  const scriptureQuery = "SELECT sermon_id, sort_order, citation FROM public_sermon_scripture ORDER BY sermon_id, sort_order";
+  const [sermons] = await source.query(sermonQuery);
+  const [scripture] = await source.query(scriptureQuery);
   await source.commit();
 
   await target.beginTransaction();
-  await target.query("DELETE FROM public_sermon_scripture");
-  await target.query("DELETE FROM public_sermons");
-  for (const s of sermons) {
-    await target.execute(
-      `INSERT INTO public_sermons (id, slug, youtube_video_id, title, summary, preached_on, speaker_name, series_title)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-      [s.id, s.slug, s.youtube_video_id, s.title, s.summary, s.preached_on, s.speaker_name, s.series_title],
-    );
-  }
-  for (const r of scripture) {
-    await target.execute(
-      "INSERT INTO public_sermon_scripture (sermon_id, sort_order, citation) VALUES (?, ?, ?)",
-      [r.sermon_id, r.sort_order, r.citation],
-    );
+  const [currentSermons] = await target.query(sermonQuery);
+  const [currentScripture] = await target.query(scriptureQuery);
+  const unchanged = JSON.stringify(sermons) === JSON.stringify(currentSermons)
+    && JSON.stringify(scripture) === JSON.stringify(currentScripture);
+  if (!unchanged) {
+    await target.query("DELETE FROM public_sermon_scripture");
+    await target.query("DELETE FROM public_sermons");
+    for (const s of sermons) {
+      await target.execute(
+        `INSERT INTO public_sermons (id, slug, youtube_video_id, title, summary, preached_on, speaker_name, series_title)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+        [s.id, s.slug, s.youtube_video_id, s.title, s.summary, s.preached_on, s.speaker_name, s.series_title],
+      );
+    }
+    for (const r of scripture) {
+      await target.execute(
+        "INSERT INTO public_sermon_scripture (sermon_id, sort_order, citation) VALUES (?, ?, ?)",
+        [r.sermon_id, r.sort_order, r.citation],
+      );
+    }
   }
   await target.commit();
-  console.info(`Published staging snapshot with ${sermons.length} sermons and ${scripture.length} Scripture references.`);
+  console.info(unchanged
+    ? "Staging publication snapshot is current."
+    : `Published staging snapshot with ${sermons.length} sermons and ${scripture.length} Scripture references.`);
 } catch (error) {
   if (target) await target.rollback().catch(() => {});
   const code = typeof error?.code === "string" ? error.code : "PUBLICATION_FAILED";
