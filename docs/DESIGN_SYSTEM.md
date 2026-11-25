@@ -122,13 +122,19 @@ Production components consume `--nl-role-*` tokens. Primitive `--nl-color-*` swa
 | Page / surface / text / border | Paper, surface, ink, slate, line | The neutral foundation; these should dominate every page |
 | Primary action | Blue | Links, buttons, current navigation, and interactive emphasis |
 | Action hover | Darkened blue | Hover emphasis that preserves the action's meaning |
-| Focus | Gold | Keyboard focus and orientation, never a decorative hover color |
+| Focus | Focus Gold | Keyboard focus on light surfaces |
 | Community | Sage | Belonging, growth, service, and local relationships |
 | Human story | Clay | Warmth, questions, hospitality, and lived experience |
 | Teaching | Gold | Belief, learning, significance, and careful attention |
 | Pastoral reflection | Cedar | Leadership, care, media reflection, and contemplative notes |
+| Celebration and invitation | Raspberry, Dusty Rose, Rose wash | Real events and occasions. Use Raspberry for text, Dusty Rose for fills and rules, and Rose wash for backgrounds |
+| Season | Vesper Plum | Liturgical observances, chiefly Advent and Lent |
+| Community, story, and teaching text | Deep Moss, Fired Clay, Deep Gold | Labels and headings that need a color cue |
+| Deep surface | Evening Navy | Footers and full-width dark bands |
 
 Do not rotate accent colors by item position. Assign a semantic tone in typed data or component markup so the same subject keeps the same color meaning wherever it appears.
+
+Use one occasion accent per screen. Keep Raspberry and Vesper Plum out of the same section. Garden Sage, Clay Hearth, Harvest Gold, and Dusty Rose serve as fills, rules, and tag backgrounds. Pair washes with Stone Ink for reading text.
 
 ## Components and reuse
 
@@ -157,7 +163,7 @@ Do not rotate accent colors by item position. Assign a semantic tone in typed da
 - one clear H1 per page;
 - logical heading order;
 - keyboard-operable navigation and controls;
-- visible gold focus treatment;
+- visible Focus Gold (`#8F7637`) rings on light surfaces and Sanctuary White rings on deep blue sections;
 - readable contrast and 16px minimum body copy;
 - no horizontal overflow at supported mobile and desktop widths;
 - reduced-motion behavior for animation;

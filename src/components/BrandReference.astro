@@ -2,9 +2,11 @@
 import {
   colorTokens,
   darkColorTokens,
+  focusColor,
   frameworkTokens,
   semanticColorTokens,
   spacingTokens,
+  supportingColorFamilies,
   surfaceTokens,
   typographyTokens,
 } from "../data/designSystem";
@@ -12,6 +14,19 @@ import Compass from "@lucide/astro/icons/compass";
 import Church from "@lucide/astro/icons/church";
 import HeartHandshake from "@lucide/astro/icons/heart-handshake";
 import Video from "@lucide/astro/icons/video";
+
+const paletteGroups = [
+  ...colorTokens.map((core) => ({
+    core,
+    family: supportingColorFamilies.find((family) => family.parent === core.cssVar),
+  })),
+  ...supportingColorFamilies.filter((family) => family.parent === null).map((family) => ({ family, core: undefined })),
+];
+const lightSystemTokens = [
+  ...colorTokens.slice(0, 5),
+  ...surfaceTokens,
+  ...supportingColorFamilies.flatMap((family) => [...family.tokens]).filter((token) => token.cssVar.startsWith("--nl-color-wash-")),
+];
 ---
 
 <section class="page-hero">
@@ -29,7 +44,18 @@ import Video from "@lucide/astro/icons/video";
     <div class="brand-four-grid">
       <article class="brand-note"><h3>Tone</h3><ul><li>Restrained rather than loud</li><li>Editorial rather than promotional</li><li>Historic without feeling dusty</li><li>Warm and human without becoming casual</li><li>Structured without becoming cold</li></ul></article>
       <article class="brand-note"><h3>Color meaning</h3><ul>{colorTokens.filter((token) => token.role && !["Sanctuary White", "Stone Ink", "Soft Slate", "Quiet Line"].includes(token.name)).map((token) => <li><strong>{token.name}</strong> = {token.role}</li>)}</ul></article>
-      <article class="brand-note"><h3>Usage rules</h3><ul><li>Neutrals should do most of the work</li><li>Accents stay sparse and intentional</li><li>Backgrounds feel like paper, not screens</li><li>Blue carries primary actions and trust</li><li>Avoid pure black and high saturation</li></ul></article>
+      <article class="brand-note">
+        <h3>Usage rules</h3>
+        <ul>
+          <li>Let neutrals do most of the work. Use accents sparingly and keep saturation low.</li>
+          <li>Keep backgrounds paper-like and avoid pure black. Blue carries primary actions and trust.</li>
+          <li>Supporting shades extend their color families. Raspberry signals celebration, and Vesper Plum marks liturgical seasons.</li>
+          <li>Use Garden Sage, Clay Hearth, Harvest Gold, and Dusty Rose for fills, rules, and tag backgrounds. Use Deep Moss, Fired Clay, Deep Gold, or Raspberry for text that needs a color cue.</li>
+          <li>Use one occasion accent per screen. Keep Raspberry and Vesper Plum out of the same section.</li>
+          <li>Use Raspberry for a real event or occasion. Reserve Vesper Plum for liturgical seasons, chiefly Advent and Lent.</li>
+          <li>Use washes as backgrounds and pair them with Stone Ink for reading text.</li>
+        </ul>
+      </article>
       <article class="brand-note"><h3>Current read</h3><ul><li>Thoughtful rather than hype-driven</li><li>Calm, confident, and image-led</li><li>Warm without novelty styling</li><li>Grounded in historic Christianity</li><li>Simple enough to scale</li></ul></article>
     </div>
   </div>
@@ -68,13 +94,37 @@ import Video from "@lucide/astro/icons/video";
 <section class="section-shell section-border" id="colors">
   <div class="container-shell">
     <div class="section-heading"><p class="eyebrow">Color</p><div class="stack"><h2>A paper-like foundation with purposeful accents.</h2><p class="lead">Every swatch is generated from the source token that also drives production CSS.</p></div></div>
-    <h3 class="brand-section-title">Primary and accent palette</h3>
-    <div class="three-grid brand-palette">{colorTokens.map((token) => <div class={`brand-swatch brand-swatch-${token.tone}`} style={`background:var(${token.cssVar})`}><strong>{token.name}</strong><span>{token.value}</span><code>{token.cssVar}</code></div>)}</div>
-    <h3 class="brand-section-title">Semantic color vocabulary</h3>
-    <p class="lead brand-role-intro">Components choose a role, not a favorite swatch. This layer keeps an action blue, a focus state gold, and an accent tied to the meaning of its content.</p>
+    <h3 class="brand-section-title">Color palette</h3>
+    <div class="three-grid brand-palette">
+      {paletteGroups.map(({ core, family }) => (
+        <div class="stack">
+          {core && (
+            <div class="brand-role">
+              <i style={`background:var(${core.cssVar})`} aria-hidden="true"></i>
+              <span><strong>{core.name}</strong><small>{core.value}</small><code>{core.cssVar}</code></span>
+            </div>
+          )}
+          {family && (
+            <div>
+              <h4 class="brand-label">{family.name} · Supporting</h4>
+              <div class="brand-family-tokens">
+                {family.tokens.map((token) => (
+                  <div class="brand-role">
+                    <i style={`background:var(${token.cssVar})`} aria-hidden="true"></i>
+                    <span><strong>{token.name}</strong><small>{token.value} · {token.role}</small><code>{token.cssVar}</code></span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+    <h3 class="brand-section-title">Semantic color roles</h3>
+    <p class="lead brand-role-intro">Choose colors by their role. Blue carries action, gold marks keyboard focus on light surfaces, and accents reflect the subject.</p>
     <div class="brand-role-grid">{semanticColorTokens.map((token) => <div class="brand-role"><i style={`background:var(${token.cssVar})`}></i><span><strong>{token.name}</strong><small>{token.role}</small><code>{token.cssVar}</code></span></div>)}</div>
     <div class="brand-system-grid">
-      <section class="brand-color-system light-system"><h3>Light mode system</h3><div class="token-list">{[...colorTokens.slice(0, 5), ...surfaceTokens].map((token) => <div class="token-row"><i style={`background:var(${token.cssVar})`}></i><span><strong>{token.name}</strong><small>{token.cssVar}</small></span></div>)}</div></section>
+      <section class="brand-color-system light-system"><h3>Light mode system</h3><div class="token-list">{lightSystemTokens.map((token) => <div class="token-row"><i style={`background:var(${token.cssVar})`}></i><span><strong>{token.name}</strong><small>{token.cssVar}</small></span></div>)}</div></section>
       <section class="brand-color-system dark-system"><h3>Dark mode tokens</h3><div class="token-list">{darkColorTokens.map((token) => <div class="token-row"><i style={`background:var(${token.cssVar})`}></i><span><strong>{token.name}</strong><small>{token.cssVar}</small></span></div>)}</div></section>
     </div>
   </div>
@@ -112,7 +162,11 @@ import Video from "@lucide/astro/icons/video";
       <article class="brand-panel"><h3>Card</h3><p class="brand-subhead">A simple container with a quiet shadow.</p><p>Cards group related content without turning every section into a dashboard.</p></article>
       <div><h3>Image placeholder block</h3><div class="photo-placeholder brand-image-placeholder">Image placeholder</div></div>
       <article class="brand-panel brand-motion"><h3>Motion behavior</h3><ul><li>Gentle movement and crossfades</li><li>Still photography, never autoplay video</li><li>Stable layout during transitions</li><li>Paused while the page is hidden</li><li>Static composition for reduced motion</li></ul></article>
-      <article class="brand-panel"><h3>Focus and accessibility</h3><p>Visible gold focus rings, readable contrast, 16px minimum body text, descriptive image alt text, and keyboard-operable navigation are system requirements.</p></article>
+      <article class="brand-panel">
+        <h3>Focus and accessibility</h3>
+        <p>Focus Gold (<code>{focusColor.value}</code>) measures 4.01:1 on Sanctuary White. Use a Sanctuary White focus ring on deep blue sections.</p>
+        <p>Soft Slate measures 5.03:1 on Sanctuary White. Stone Ink measures at least 7.65:1 across the five named washes. Use readable contrast, 16px minimum body text, descriptive image alt text, and keyboard-operable navigation.</p>
+      </article>
     </div>
   </div>
 </section>
@@ -146,18 +200,13 @@ import Video from "@lucide/astro/icons/video";
   .inset-24 { padding: var(--nl-space-6); } .inset-32 { padding: var(--nl-space-8); } .inset-48 { padding: var(--nl-space-12); }
   .brand-section-title { margin-bottom: var(--nl-space-5); }
   .brand-palette { margin-bottom: var(--nl-space-12); }
+  .brand-family-tokens { display: grid; gap: var(--nl-space-2); }
   .brand-role-intro { max-width: 52rem; margin-bottom: var(--nl-space-6); }
   .brand-role-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--nl-space-3); margin-bottom: var(--nl-space-12); }
   .brand-role { display: grid; grid-template-columns: 3.25rem minmax(0, 1fr); gap: var(--nl-space-3); align-items: center; padding: var(--nl-space-4); border: 1px solid var(--line); border-radius: var(--nl-radius-control); background: var(--surface); }
   .brand-role i { display: block; width: 3.25rem; height: 3.25rem; border: 1px solid color-mix(in srgb, var(--slate) 35%, transparent); border-radius: var(--nl-radius-pill); }
   .brand-role span, .brand-role strong, .brand-role small, .brand-role code { display: block; }
   .brand-role small { margin-block: var(--nl-space-1); color: var(--slate); font-size: 0.78rem; line-height: 1.35; }
-  .brand-swatch { min-height: 10rem; padding: var(--nl-space-5); border-radius: var(--nl-radius-card); }
-  .brand-swatch strong, .brand-swatch span, .brand-swatch code { display: block; }
-  .brand-swatch span { margin-top: var(--nl-space-1); font-family: var(--font-mono); font-size: 0.75rem; }
-  .brand-swatch code { margin-top: var(--nl-space-2); color: currentColor; opacity: 0.8; }
-  .brand-swatch-dark { color: var(--paper); }
-  .brand-swatch-light { color: var(--ink); border: 1px solid var(--line); }
   .brand-color-system { padding: var(--nl-space-8); border: 1px solid var(--line); border-radius: var(--nl-radius-card); }
   .light-system { background: var(--surface); }
   .dark-system { border-color: var(--dark-border); background: var(--dark-background); color: var(--dark-text); }
@@ -177,9 +226,9 @@ import Video from "@lucide/astro/icons/video";
   .brand-icon-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--nl-space-4); }
   .brand-icon-grid > div { display: grid; justify-items: center; gap: var(--nl-space-3); padding: var(--nl-space-6); border: 1px solid var(--line); border-radius: var(--nl-radius-card); background: var(--surface); }
   .brand-icon-grid span { display: grid; width: 3.5rem; height: 3.5rem; place-items: center; border-radius: var(--nl-radius-pill); background: var(--wash-blue); color: var(--blue); }
-  .brand-icon-grid > div:nth-child(2) span { background: var(--wash-sage); color: var(--sage); }
+  .brand-icon-grid > div:nth-child(2) span { background: var(--wash-sage); color: var(--nl-role-community-text); }
   .brand-icon-grid > div:nth-child(3) span { background: var(--wash-clay); color: var(--cedar); }
-  .brand-icon-grid > div:nth-child(4) span { background: var(--wash-gold); color: color-mix(in srgb, var(--gold) 68%, var(--ink)); }
+  .brand-icon-grid > div:nth-child(4) span { background: var(--wash-gold); color: var(--nl-role-teaching-text); }
   .brand-icon-grid strong { font-family: var(--font-heading); }
   .brand-icon-rules { margin-top: var(--nl-space-4); }
   .brand-icon-rules ul { margin: var(--nl-space-4) 0 0; padding-left: var(--nl-space-5); color: var(--slate); }
