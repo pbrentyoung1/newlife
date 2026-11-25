@@ -1,0 +1,55 @@
+---
+import PageLayout from "../../../layouts/PageLayout.astro";
+import { listPublishedSermons, sermonDate } from "../../../server/sermons";
+
+export const prerender = false;
+Astro.response.headers.set("Cache-Control", "no-store");
+
+const requestedPage = Astro.url.searchParams.get("page");
+const page = requestedPage ? Number(requestedPage) : 1;
+const validPage = Number.isSafeInteger(page) && page > 0 && page <= 10_000;
+let result: Awaited<ReturnType<typeof listPublishedSermons>> | null = null;
+if (validPage) {
+  try {
+    result = await listPublishedSermons(page);
+  } catch {
+    console.error("Published sermon library could not be read");
+    Astro.response.status = 503;
+  }
+}
+if (!validPage || (page > 1 && result && !result.sermons.length)) Astro.response.status = 404;
+const pageLink = (target: number) => target === 1 ? "/watch/sermons/" : `/watch/sermons/?page=${target}`;
+---
+
+<PageLayout eyebrow="Watch" title="Sermon library" description="Browse published New Life sermons." tone="cedar">
+  <section class="section-shell">
+    <div class="container-shell stack">
+      {Astro.response.status === 404 ? (
+        <p>That page isn’t available. <a href="/watch/sermons/">Return to the sermon library.</a></p>
+      ) : !result ? (
+        <p>The sermon library is temporarily unavailable. <a href="/watch/">Find messages on the Watch page.</a></p>
+      ) : !result.sermons.length ? (
+        <p>The sermon library has no published entries yet. <a href="/watch/">Watch the latest message.</a></p>
+      ) : (
+        <>
+          <ul class="stack">
+            {result.sermons.map((sermon) => (
+              <li>
+                <h2><a href={`/watch/sermons/${sermon.slug}/`}>{sermon.title}</a></h2>
+                {sermon.preached_on && <time datetime={sermon.preached_on}>{sermonDate(sermon.preached_on)}</time>}
+                {sermon.speaker_name && <p>{sermon.speaker_name}</p>}
+                <p>{sermon.summary}</p>
+              </li>
+            ))}
+          </ul>
+          {(page > 1 || result.hasNext) && (
+            <nav class="button-row" aria-label="Sermon pages">
+              {page > 1 && <a href={pageLink(page - 1)}>Newer sermons</a>}
+              {result.hasNext && <a href={pageLink(page + 1)}>Older sermons</a>}
+            </nav>
+          )}
+        </>
+      )}
+    </div>
+  </section>
+</PageLayout>

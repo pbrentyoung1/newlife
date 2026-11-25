@@ -1,8 +1,12 @@
-import { readdir, readFile } from "node:fs/promises";
+import { access, readdir, readFile } from "node:fs/promises";
 import { extname, join, relative } from "node:path";
 
 const root = new URL("../", import.meta.url).pathname;
-const dist = join(root, "dist");
+const output = join(root, "dist");
+const dist = await access(join(output, "client", "index.html")).then(
+  () => join(output, "client"),
+  () => output,
+);
 const src = join(root, "src");
 
 async function filesUnder(directory, extensions) {

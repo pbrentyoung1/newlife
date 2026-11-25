@@ -1,0 +1,42 @@
+---
+import PageLayout from "../../../layouts/PageLayout.astro";
+import { getPublishedSermon, sermonDate } from "../../../server/sermons";
+
+export const prerender = false;
+Astro.response.headers.set("Cache-Control", "no-store");
+
+let result: Awaited<ReturnType<typeof getPublishedSermon>> = null;
+try {
+  result = await getPublishedSermon(Astro.params.slug ?? "");
+  if (!result) Astro.response.status = 404;
+} catch {
+  console.error("Published sermon could not be read");
+  Astro.response.status = 503;
+}
+
+const sermon = result?.sermon;
+const title = sermon?.title ?? (Astro.response.status === 503 ? "Sermon temporarily unavailable" : "Sermon not found");
+const description = sermon?.summary ?? "Find published messages in the New Life sermon library.";
+---
+
+<PageLayout eyebrow="Sermon library" title={title} description={description} tone="cedar">
+  <section class="section-shell">
+    <div class="container-shell stack">
+      {sermon && result && (
+        <>
+          {sermon.preached_on && <time datetime={sermon.preached_on}>{sermonDate(sermon.preached_on)}</time>}
+          {sermon.speaker_name && <p>{sermon.speaker_name}</p>}
+          {sermon.series_title && <p>Series: {sermon.series_title}</p>}
+          {result.scripture.length > 0 && (
+            <>
+              <h2>Scripture references</h2>
+              <ul>{result.scripture.map(({ citation }) => <li>{citation}</li>)}</ul>
+            </>
+          )}
+          <p><a class="button" href={`https://www.youtube.com/watch?v=${encodeURIComponent(sermon.youtube_video_id)}`}>Watch on YouTube</a></p>
+        </>
+      )}
+      <p><a href="/watch/sermons/">Browse the sermon library</a></p>
+    </div>
+  </section>
+</PageLayout>

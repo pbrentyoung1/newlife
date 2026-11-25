@@ -23,6 +23,13 @@ const nextStepActions = nextStep
 
 <PageLayout eyebrow={eyebrow} title={title} description={description} note={note} tone={tone}>
   {slug === "watch" && <LatestSermon />}
+  {slug === "watch" && (
+    <section class="section-shell">
+      <div class="container-shell">
+        <a class="button-secondary" href="/watch/sermons/">Browse the sermon library</a>
+      </div>
+    </section>
+  )}
   <PageContentIndex sections={sections} tone={tone} />
 
   <section class="section-shell section-blue page-next-step">

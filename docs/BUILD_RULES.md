@@ -9,6 +9,8 @@
 - Do not change legacy-domain or email DNS records without a reviewed migration step.
 - Do not add a server runtime, database, authentication, form handler, or Planning Center synchronization without a demonstrated requirement.
 
+The sermon-library staging branch uses the Astro Node adapter for just the library and detail routes. The remaining site still prerenders. Run the staging build with `dist/server/entry.mjs` and serve its static assets from `dist/client`. See [the staging database procedure](SERMON_LIBRARY_STAGING.md) before applying this branch to a host.
+
 Before deployment:
 
 ```sh
