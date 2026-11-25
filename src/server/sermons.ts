@@ -19,16 +19,16 @@ let pool: Pool | undefined;
 
 function database(): Pool {
   if (pool) return pool;
-  const { DB_NAME, DB_USER, DB_PASSWORD } = process.env;
-  if (!DB_NAME || !DB_USER || !DB_PASSWORD) {
+  const { PUBLICATION_DB_NAME, PUBLICATION_DB_USER, PUBLICATION_DB_PASSWORD } = process.env;
+  if (!PUBLICATION_DB_NAME || !PUBLICATION_DB_USER || !PUBLICATION_DB_PASSWORD) {
     throw new Error("Sermon reader database settings are missing");
   }
   pool = createPool({
     host: "127.0.0.1",
     port: 3306,
-    user: DB_USER,
-    password: DB_PASSWORD,
-    database: DB_NAME,
+    user: PUBLICATION_DB_USER,
+    password: PUBLICATION_DB_PASSWORD,
+    database: PUBLICATION_DB_NAME,
     connectionLimit: 4,
     queueLimit: 16,
     connectTimeout: 4000,
