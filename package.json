@@ -9,6 +9,7 @@
   "scripts": {
     "dev": "ASTRO_TELEMETRY_DISABLED=1 astro dev",
     "build": "ASTRO_TELEMETRY_DISABLED=1 astro build && node scripts/package-staging-publisher.mjs",
+    "build:staging-admin": "node scripts/package-staging-admin.mjs",
     "preview": "ASTRO_TELEMETRY_DISABLED=1 astro preview",
     "audit:brand": "node scripts/audit-branding.mjs"
   },
