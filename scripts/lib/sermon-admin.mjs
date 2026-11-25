@@ -1,4 +1,6 @@
 import { createHash, timingSafeEqual } from "node:crypto";
+import { draftMetadata, metadataFields, readDraftMetadata, writeDraftMetadata } from "./sermon-draft-metadata.mjs";
+import { FormError, readBody, readSermonMarkdown, sampleMarkdown } from "./sermon-markdown.mjs";
 import { changePublication } from "./sermon-publication.mjs";
 
 const slugPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
@@ -8,10 +10,9 @@ const states = {
   published: "Published or scheduled", withdrawn: "Withdrawn",
 };
 const pageSize = 30;
-const columns = "slug, youtube_video_id, title, summary, preached_on, state, reviewed_by, reviewed_at, published_at";
+const columns = "id, slug, youtube_video_id, title, summary, preached_on, state, reviewed_by, reviewed_at, published_at";
 const library = "https://legendary-white-clam-37.hostingersite.com/watch/sermons/";
 
-class FormError extends Error {}
 const escape = value => String(value ?? "").replace(/[&<>"']/g, char =>
   ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]);
 const digest = value => createHash("sha256").update(value).digest();
@@ -50,14 +51,37 @@ async function readForm(request) {
   if (request.headers["content-type"]?.split(";")[0] !== "application/x-www-form-urlencoded") {
     throw new FormError("Submit the form from the staging admin page.");
   }
-  const pieces = [];
-  let size = 0;
-  for await (const chunk of request) {
-    size += chunk.length;
-    if (size > 24_000) throw new FormError("The form is too large.");
-    pieces.push(chunk);
+  const body = await readBody(request, 128 * 1024, "The form is too large.");
+  return new URLSearchParams(body.toString("utf8"));
+}
+
+async function writeDraft(database, { title, slug, video, summary, date }, editing) {
+  if (!editing) {
+    const [result] = await database.execute("INSERT INTO sermons (slug, title, youtube_video_id, summary, preached_on) VALUES (?, ?, ?, ?, ?)",
+      [slug, title, video, summary, date]);
+    return result;
   }
-  return new URLSearchParams(Buffer.concat(pieces).toString("utf8"));
+  const [result] = await database.execute("UPDATE sermons SET title=?, youtube_video_id=?, summary=?, preached_on=?, state='draft', reviewed_by=NULL, reviewed_at=NULL WHERE slug=? AND state IN ('draft','in_review')",
+    [title, video, summary, date, slug]);
+  return result;
+}
+
+async function saveDraft(pool, draft, metadata, record) {
+  const changingMetadata = metadata && (record || metadata.speaker || metadata.series || metadata.citations.length || metadata.topics.length);
+  if (!changingMetadata) return writeDraft(pool, draft, Boolean(record));
+  const connection = await pool.getConnection();
+  try {
+    await connection.beginTransaction();
+    const result = await writeDraft(connection, draft, Boolean(record));
+    if (result.affectedRows) await writeDraftMetadata(connection, record?.id ?? result.insertId, metadata);
+    await connection.commit();
+    return result;
+  } catch (error) {
+    await connection.rollback();
+    throw error;
+  } finally {
+    connection.release();
+  }
 }
 
 const styles = `*{box-sizing:border-box}body{margin:0;background:#f4f5f1;color:#243328;font:16px/1.5 system-ui,sans-serif}
@@ -65,6 +89,7 @@ main{max-width:780px;margin:auto;padding:1.5rem}h1,h2{line-height:1.2}a{color:#2
 section,article{background:#fff;border:1px solid #d6dfd5;border-radius:.6rem;padding:1.25rem;margin:1rem 0}
 label{display:block;font-weight:650;margin-top:.85rem}input:not([type=checkbox]),textarea{display:block;width:100%;font:inherit;padding:.45rem;border:1px solid #78877b;border-radius:.25rem}
 textarea{min-height:8rem}button{font:inherit;font-weight:650;padding:.4rem .8rem;margin-top:.8rem;background:#285b47;color:white;border:1px solid #285b47;border-radius:.3rem;cursor:pointer}
+details{margin-top:1rem}summary{cursor:pointer;font-weight:650}details textarea{min-height:4rem}.thumbnail{width:12rem;max-width:100%;height:auto;border-radius:.3rem}
 .tag{background:#e7eee6;padding:.12rem .5rem;border-radius:.4rem}li{margin:.55rem 0}.note{color:#405044}form.inline{display:inline-block;margin-right:.5rem}.notice{border-left:.25rem solid #285b47;padding-left:.7rem}`;
 
 function html(title, body) {
@@ -81,11 +106,37 @@ ${record ? "" : `<label>Permanent URL slug<input name="slug" maxlength="180" pat
 <label>YouTube video URL or ID<input name="video" maxlength="2048" required value="${escape(values.video ?? values.youtube_video_id)}"></label>
 <label>Sermon date (optional)<input type="date" name="date" value="${escape(values.date ?? values.preached_on)}"></label>
 <label>Summary<textarea name="summary" maxlength="4000" required>${escape(values.summary)}</textarea></label>
+<details${metadataFields.some(field => values[field]) ? " open" : ""}><summary>Speaker, series, Scripture, and topics</summary>
+<label>Speaker<input name="speaker" maxlength="200" value="${escape(values.speaker)}"></label>
+<label>Series<input name="series" maxlength="200" value="${escape(values.series)}"></label>
+<label>Scripture references<textarea name="scripture" aria-describedby="scripture-help">${escape(values.scripture)}</textarea></label>
+<p id="scripture-help" class="note">Use full book names, one reference per line. Put the main passage first.</p>
+<label>Topics (one per line)<textarea name="topics">${escape(values.topics)}</textarea></label>
+<p class="note">Saving reuses matching names and adds new names to the staging catalog.</p>
+</details>
 <button>${record ? "Save changes" : "Save draft"}</button></form>`;
 }
 
 function postedFormValues(form) {
-  return Object.fromEntries(["title", "slug", "video", "date", "summary"].map(key => [key, form.get(key)]));
+  return Object.fromEntries(["title", "slug", "video", "date", "summary", ...metadataFields].map(key => [key, form.get(key)]));
+}
+
+function uploadForm() {
+  return `<section><h2>Upload sermon Markdown</h2>
+<form method="post" action="/sermons/import" enctype="multipart/form-data">
+<label>Markdown file<input type="file" name="markdown" accept=".md,text/markdown" required></label>
+<button>Review uploaded details</button></form>
+<p><a href="/sermon-import-example.md" download>Download a sample Markdown file</a></p></section>`;
+}
+
+function importPreview(values, hasBody, warnings) {
+  const id = youtubeId(values.video ?? "");
+  return html("Review imported sermon", `<section>
+<p role="status">Review the imported fields, then select Save draft.</p>
+${hasBody ? "<p>The Markdown body was skipped. Keep posting transcripts manually.</p>" : ""}
+${warnings.length ? `<ul role="alert">${warnings.map(warning => `<li>${escape(warning)}</li>`).join("")}</ul>` : ""}
+${id ? `<p><img class="thumbnail" src="https://i.ytimg.com/vi/${id}/hqdefault.jpg" alt="YouTube thumbnail preview" referrerpolicy="no-referrer"></p>` : ""}
+${draftForm(null, values)}</section>${uploadForm()}`);
 }
 
 function actionForm(slug, action, label, content = "") {
@@ -108,6 +159,10 @@ function sermonPage(record, notice, values) {
 <p><a href="https://www.youtube.com/watch?v=${encodeURIComponent(record.youtube_video_id)}">Check the YouTube recording</a></p>
 <p>Slug: <code>${escape(slug)}</code></p>
 ${record.preached_on ? `<p>Sermon date: ${escape(record.preached_on)}</p>` : ""}
+${record.speaker ? `<p>Speaker: ${escape(record.speaker)}</p>` : ""}
+${record.series ? `<p>Series: ${escape(record.series)}</p>` : ""}
+${record.scripture ? `<p>Scripture: ${escape(record.scripture.split("\n").join(", "))}</p>` : ""}
+${record.topics ? `<p>Topics: ${escape(record.topics.split("\n").join(", "))}</p>` : ""}
 ${record.reviewed_by ? `<p>Reviewed by ${escape(record.reviewed_by)} · ${escape(record.reviewed_at)} UTC</p>` : ""}
 ${notice ? `<p class="notice" role="status">${escape(notice)}</p>` : ""}
 ${next?.() ?? ""}<p class="note">The public library changes after the next successful snapshot refresh.</p>
@@ -128,13 +183,34 @@ export function createSermonAdmin({ pool, origin, username, password, actor }) {
     const [[row]] = await pool.execute(`SELECT ${columns} FROM sermons WHERE slug = ?`, [slug]);
     return row;
   }
+  async function reviewImport(request) {
+    const { values, hasBody } = await readSermonMarkdown(request);
+    const fields = new URLSearchParams(values);
+    const warnings = [];
+    for (const validate of [draftValues, draftMetadata]) {
+      try {
+        validate(fields);
+      } catch (error) {
+        if (!(error instanceof FormError)) throw error;
+        warnings.push(error.message);
+      }
+    }
+    const video = youtubeId(values.video ?? "");
+    const slug = values.slug?.length <= 180 && slugPattern.test(values.slug) ? values.slug : "";
+    if (slug || video) {
+      const [matches] = await pool.execute("SELECT slug FROM sermons WHERE slug=? OR youtube_video_id=? LIMIT 1",
+        [slug, video ?? ""]);
+      if (matches.length) warnings.push("A sermon already uses this URL slug or YouTube video. Check the existing sermon before saving.");
+    }
+    return importPreview(values, hasBody, warnings);
+  }
   return async (req, res) => {
     res.setHeader("Cache-Control", "no-store");
     res.setHeader("X-Robots-Tag", "noindex, nofollow");
     res.setHeader("X-Content-Type-Options", "nosniff");
     // Native form POSTs need an Origin header for the same-origin check below.
     res.setHeader("Referrer-Policy", "same-origin");
-    res.setHeader("Content-Security-Policy", "default-src 'none'; style-src 'unsafe-inline'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'");
+    res.setHeader("Content-Security-Policy", "default-src 'none'; style-src 'unsafe-inline'; img-src https://i.ytimg.com; frame-ancestors 'none'; base-uri 'none'; form-action 'self'");
     res.setHeader("Content-Type", "text/html; charset=utf-8");
     const send = (code, body) => res.writeHead(code).end(body);
     const redirect = (slug, message) => res.writeHead(303, { Location: `${detail(slug)}?notice=${message}` }).end();
@@ -149,12 +225,20 @@ export function createSermonAdmin({ pool, origin, username, password, actor }) {
     let record;
     try {
       const url = new URL(req.url, origin);
+      if (req.method === "GET" && url.pathname === "/sermon-import-example.md") {
+        res.setHeader("Content-Type", "text/markdown; charset=utf-8");
+        res.setHeader("Content-Disposition", 'attachment; filename="sermon-import-example.md"');
+        return send(200, sampleMarkdown);
+      }
+      if (req.method === "POST" && url.pathname === "/sermons/import") {
+        return send(200, await reviewImport(req));
+      }
       if (req.method === "GET" && url.pathname === "/") {
         const page = Number(url.searchParams.get("page") ?? "1");
         if (!Number.isSafeInteger(page) || page < 1 || page > 10_000) return errorPage(404, "Sermon list page not found");
         const [rows] = await pool.execute("SELECT slug, title, state FROM sermons ORDER BY id DESC LIMIT ? OFFSET ?",
           [pageSize + 1, (page - 1) * pageSize]);
-        return send(200, html("Sermon editor", `<section><h2>Add a sermon</h2>${draftForm()}</section>
+        return send(200, html("Sermon editor", `${uploadForm()}<section><h2>Add a sermon manually</h2>${draftForm()}</section>
 <section><h2>Sermons</h2>${rows.length ? `<ul>${rows.slice(0, pageSize).map(row => `<li><a href="${detail(row.slug)}">${escape(row.title)}</a> · ${escape(states[row.state])}</li>`).join("")}</ul>` : "<p>No sermons on this page.</p>"}
 ${page > 1 ? `<p><a href="/?page=${page - 1}">Newer entries</a></p>` : ""}${rows.length > pageSize ? `<p><a href="/?page=${page + 1}">Older entries</a></p>` : ""}</section>`));
       }
@@ -162,15 +246,14 @@ ${page > 1 ? `<p><a href="/?page=${page - 1}">Newer entries</a></p>` : ""}${rows
       if (req.method === "GET" && match && !match[2]) {
         const row = await find(match[1]);
         const notice = url.searchParams.get("notice");
-        return row ? send(200, sermonPage(row, Object.hasOwn(messages, notice) ? messages[notice] : undefined))
+        return row ? send(200, sermonPage({ ...row, ...await readDraftMetadata(pool, row.id) }, Object.hasOwn(messages, notice) ? messages[notice] : undefined))
           : errorPage(404, "Sermon not found");
       }
       if (req.method !== "POST" || (url.pathname !== "/sermons" && !match?.[2])) return errorPage(404, "Page not found");
       form = await readForm(req);
       if (url.pathname === "/sermons") {
         const draft = draftValues(form);
-        await pool.execute("INSERT INTO sermons (slug, title, youtube_video_id, summary, preached_on) VALUES (?, ?, ?, ?, ?)",
-          [draft.slug, draft.title, draft.video, draft.summary, draft.date]);
+        await saveDraft(pool, draft, draftMetadata(form));
         return redirect(draft.slug, "created");
       }
       const [, slug, action] = match;
@@ -191,8 +274,7 @@ ${page > 1 ? `<p><a href="/?page=${page - 1}">Newer entries</a></p>` : ""}${rows
         let result;
         if (action === "edit") {
           const d = draftValues(form, slug);
-          [result] = await pool.execute("UPDATE sermons SET title=?, youtube_video_id=?, summary=?, preached_on=?, state='draft', reviewed_by=NULL, reviewed_at=NULL WHERE slug=? AND state IN ('draft','in_review')",
-            [d.title, d.video, d.summary, d.date, slug]);
+          result = await saveDraft(pool, d, draftMetadata(form), record);
         } else if (action === "review") {
           [result] = await pool.execute("UPDATE sermons SET state='in_review', reviewed_by=NULL, reviewed_at=NULL WHERE slug=? AND state IN ('draft','withdrawn')", [slug]);
         } else if (action === "approve") {
@@ -207,7 +289,7 @@ ${page > 1 ? `<p><a href="/?page=${page - 1}">Newer entries</a></p>` : ""}${rows
       if (error instanceof FormError || error?.code === "ER_DUP_ENTRY") {
         const message = error instanceof FormError ? error.message : "That URL slug or YouTube video is already in the library.";
         return send(422, record ? sermonPage(record, message, form && postedFormValues(form))
-          : html("Check the sermon details", `<p role="alert">${escape(message)}</p><section>${draftForm(null, form && postedFormValues(form))}</section>`));
+          : html("Check the sermon details", `<p role="alert">${escape(message)}</p><section>${draftForm(null, form && postedFormValues(form))}</section>${uploadForm()}`));
       }
       console.error("Staging sermon admin request failed.");
       return errorPage(503, "The staging editor is temporarily unavailable");
