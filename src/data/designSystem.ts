@@ -10,7 +10,7 @@ export const colorTokens = [
   { name: "Primary Blue", cssVar: "--nl-color-blue", value: "#2F5D7C", role: "Action, clarity, and trust", tone: "dark" },
   { name: "Sanctuary White", cssVar: "--nl-color-paper", value: "#F7F5F1", role: "Paper-like page background", tone: "light" },
   { name: "Stone Ink", cssVar: "--nl-color-ink", value: "#3E474D", role: "Primary text", tone: "dark" },
-  { name: "Soft Slate", cssVar: "--nl-color-slate", value: "#69767D", role: "Secondary text", tone: "dark" },
+  { name: "Soft Slate", cssVar: "--nl-color-slate", value: "#5F6B72", role: "Secondary text", tone: "dark" },
   { name: "Quiet Line", cssVar: "--nl-color-line", value: "#D8D4CD", role: "Borders and dividers", tone: "light" },
   { name: "Garden Sage", cssVar: "--nl-color-sage", value: "#7E8D7A", role: "Community and growth", tone: "dark" },
   { name: "Clay Hearth", cssVar: "--nl-color-clay", value: "#C47A63", role: "Story, warmth, and humanity", tone: "dark" },
@@ -20,11 +20,70 @@ export const colorTokens = [
 
 export const surfaceTokens = [
   { name: "Surface", cssVar: "--nl-color-surface", value: "#FFFEFA" },
-  { name: "Blue wash", cssVar: "--nl-color-wash-blue", value: "#E6EEF3" },
-  { name: "Sage wash", cssVar: "--nl-color-wash-sage", value: "#E8EEE7" },
-  { name: "Clay wash", cssVar: "--nl-color-wash-clay", value: "#F4E6E1" },
-  { name: "Gold wash", cssVar: "--nl-color-wash-gold", value: "#F2EBDD" },
 ] as const satisfies readonly DesignToken[];
+
+// Darker gold for keyboard focus on light surfaces.
+export const focusColor = {
+  name: "Focus Gold", cssVar: "--nl-color-focus", value: "#8F7637", role: "Keyboard focus on light surfaces",
+} as const satisfies DesignToken;
+
+export const supportingColorFamilies = [
+  {
+    name: "Blue family", parent: "--nl-color-blue",
+    tokens: [
+      // Deep anchor for footers and full-width bands.
+      { name: "Evening Navy", cssVar: "--nl-color-navy", value: "#1E3546", role: "Deep surfaces and quiet anchors" },
+      // Quiet blue background for interactive states.
+      { name: "Morning Mist", cssVar: "--nl-color-wash-blue", value: "#E3EAEE", role: "Hover, selection, and quiet backgrounds" },
+    ],
+  },
+  {
+    name: "Sage family", parent: "--nl-color-sage",
+    tokens: [
+      // Readable sage for text.
+      { name: "Deep Moss", cssVar: "--nl-color-moss", value: "#56634F", role: "Community labels and headings" },
+      // Quiet community background.
+      { name: "Sage wash", cssVar: "--nl-color-wash-sage", value: "#E8ECE5", role: "Community backgrounds" },
+    ],
+  },
+  {
+    name: "Clay family", parent: "--nl-color-clay",
+    tokens: [
+      // Readable clay for text.
+      { name: "Fired Clay", cssVar: "--nl-color-clay-deep", value: "#9A5642", role: "Story labels and headings" },
+      // Warm background for stories.
+      { name: "Clay wash", cssVar: "--nl-color-wash-clay", value: "#F5E6DF", role: "Story backgrounds" },
+    ],
+  },
+  {
+    name: "Gold family", parent: "--nl-color-gold",
+    tokens: [
+      // Readable gold for text.
+      { name: "Deep Gold", cssVar: "--nl-color-gold-deep", value: "#7A6534", role: "Teaching labels and headings" },
+      // Quiet background for teaching and celebration.
+      { name: "Candlelight", cssVar: "--nl-color-wash-gold", value: "#F1E6CC", role: "Teaching callouts and Christmas or Easter backgrounds" },
+      focusColor,
+    ],
+  },
+  {
+    name: "Raspberry family", parent: null,
+    tokens: [
+      // Celebration foreground.
+      { name: "Raspberry", cssVar: "--nl-color-raspberry", value: "#93465F", role: "Celebration and invitation" },
+      // Softer celebration accent.
+      { name: "Dusty Rose", cssVar: "--nl-color-rose", value: "#B5788A", role: "Fills, accent rules, and illustration" },
+      // Light celebration background.
+      { name: "Rose wash", cssVar: "--nl-color-wash-rose", value: "#F2E4E6", role: "Event banners and tags" },
+    ],
+  },
+  {
+    name: "Plum", parent: null,
+    tokens: [
+      // Seasonal foreground or deep surface.
+      { name: "Vesper Plum", cssVar: "--nl-color-plum", value: "#5E4A62", role: "Advent, Lent, and seasonal headers" },
+    ],
+  },
+] as const satisfies readonly { name: string; parent: DesignToken["cssVar"] | null; tokens: readonly DesignToken[] }[];
 
 export const semanticColorTokens = [
   { name: "Page background", cssVar: "--nl-role-page", value: "var(--nl-color-paper)", role: "Default page canvas" },
@@ -35,11 +94,19 @@ export const semanticColorTokens = [
   { name: "Primary action", cssVar: "--nl-role-action", value: "var(--nl-color-blue)", role: "Links, buttons, and active navigation" },
   { name: "Action hover", cssVar: "--nl-role-action-hover", value: "color-mix(in srgb, var(--nl-color-blue) 84%, var(--nl-color-ink))", role: "Interactive emphasis without changing meaning" },
   { name: "Action wash", cssVar: "--nl-role-action-wash", value: "var(--nl-color-wash-blue)", role: "Hover and selected backgrounds" },
-  { name: "Focus", cssVar: "--nl-role-focus", value: "var(--nl-color-gold)", role: "Keyboard focus and orientation" },
+  { name: "Focus", cssVar: "--nl-role-focus", value: "var(--nl-color-focus)", role: "Keyboard focus on light surfaces" },
   { name: "Community", cssVar: "--nl-role-community", value: "var(--nl-color-sage)", role: "Growth, belonging, and local relationships" },
   { name: "Human story", cssVar: "--nl-role-human", value: "var(--nl-color-clay)", role: "Warmth, questions, and lived experience" },
   { name: "Teaching", cssVar: "--nl-role-teaching", value: "var(--nl-color-gold)", role: "Belief, significance, and learning" },
   { name: "Pastoral reflection", cssVar: "--nl-role-reflection", value: "var(--nl-color-cedar)", role: "Leadership, care, and reflection" },
+  { name: "Celebration", cssVar: "--nl-role-celebration", value: "var(--nl-color-raspberry)", role: "Events, Christmas, Easter, baptisms, and invitations" },
+  { name: "Celebration soft", cssVar: "--nl-role-celebration-soft", value: "var(--nl-color-rose)", role: "Accent lines and fills" },
+  { name: "Celebration wash", cssVar: "--nl-role-celebration-wash", value: "var(--nl-color-wash-rose)", role: "Event banner backgrounds" },
+  { name: "Season", cssVar: "--nl-role-season", value: "var(--nl-color-plum)", role: "Advent, Lent, and other liturgical observances" },
+  { name: "Community text", cssVar: "--nl-role-community-text", value: "var(--nl-color-moss)", role: "Text-safe community color" },
+  { name: "Human story text", cssVar: "--nl-role-human-text", value: "var(--nl-color-clay-deep)", role: "Text-safe story color" },
+  { name: "Teaching text", cssVar: "--nl-role-teaching-text", value: "var(--nl-color-gold-deep)", role: "Text-safe teaching color" },
+  { name: "Deep surface", cssVar: "--nl-role-deep", value: "var(--nl-color-navy)", role: "Footer and full-width dark bands" },
 ] as const satisfies readonly DesignToken[];
 
 export const darkColorTokens = [
@@ -92,6 +159,7 @@ export const frameworkTokens = [
 export const allDesignTokens = [
   ...colorTokens,
   ...surfaceTokens,
+  ...supportingColorFamilies.flatMap<DesignToken>((family) => family.tokens),
   ...semanticColorTokens,
   ...darkColorTokens,
   ...typographyTokens,
