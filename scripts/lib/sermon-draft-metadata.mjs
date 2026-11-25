@@ -30,7 +30,7 @@ function scriptureRange(citation) {
   return [book, chapterStart, verseStart, chapterEnd, verseEnd, citation];
 }
 
-export function draftMetadata(form) {
+export function draftMetadata(form, partial = false) {
   if (!metadataFields.some(field => form.has(field))) return null;
   const speaker = form.get("speaker")?.trim() ?? "";
   const series = form.get("series")?.trim() ?? "";
@@ -42,7 +42,11 @@ export function draftMetadata(form) {
   if (citations.length > 20 || topics.length > 20) {
     throw new FormError("Enter up to 20 Scripture references and 20 topics.");
   }
-  return { speaker, series, citations: citations.map(scriptureRange), topics };
+  const metadata = { speaker, series, citations: citations.map(scriptureRange), topics };
+  if (partial) for (const field of metadataFields) {
+    if (!form.has(field)) delete metadata[field === "scripture" ? "citations" : field];
+  }
+  return metadata;
 }
 
 const catalogs = {
@@ -51,32 +55,44 @@ const catalogs = {
   topic: "INSERT INTO sermon_topics (slug, label) VALUES (?, ?)",
 };
 
-async function catalogId(database, catalog, name) {
-  if (!name) return null;
+export function catalogKey(name) {
   const slug = slugify(name);
   const suffix = () => createHash("sha256").update(name.normalize("NFKC").toLowerCase()).digest("hex").slice(0, 16);
-  const key = slug && slug.length <= 120 ? slug : `${slug.slice(0, 100).replace(/-$/, "") || "term"}-${suffix()}`;
-  const [result] = await database.execute(`${catalogs[catalog]} ON DUPLICATE KEY UPDATE id=LAST_INSERT_ID(id)`, [key, name]);
+  return slug && slug.length <= 120 ? slug : `${slug.slice(0, 100).replace(/-$/, "") || "term"}-${suffix()}`;
+}
+
+async function catalogId(database, catalog, name) {
+  if (!name) return null;
+  const [result] = await database.execute(`${catalogs[catalog]} ON DUPLICATE KEY UPDATE id=LAST_INSERT_ID(id)`, [catalogKey(name), name]);
   return result.insertId;
 }
 
 export async function writeDraftMetadata(database, sermonId, { speaker, series, citations, topics }) {
-  const speakerId = await catalogId(database, "speaker", speaker);
-  const seriesId = await catalogId(database, "series", series);
-  await database.execute("UPDATE sermons SET speaker_id=?, series_id=? WHERE id=?", [speakerId, seriesId, sermonId]);
-
-  await database.execute("DELETE FROM sermon_scripture WHERE sermon_id=?", [sermonId]);
-  for (const [order, citation] of citations.entries()) {
-    await database.execute(`INSERT INTO sermon_scripture
-      (sermon_id, sort_order, book_slug, chapter_start, verse_start, chapter_end, verse_end, citation)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?)`, [sermonId, order, ...citation]);
+  const names = [];
+  for (const [catalog, name] of [["speaker", speaker], ["series", series]]) {
+    if (name !== undefined) names.push([`${catalog}_id=?`, await catalogId(database, catalog, name)]);
+  }
+  if (names.length) {
+    await database.execute(`UPDATE sermons SET ${names.map(([column]) => column).join(", ")} WHERE id=?`,
+      [...names.map(([, value]) => value), sermonId]);
   }
 
-  await database.execute("DELETE FROM sermon_topic_links WHERE sermon_id=?", [sermonId]);
-  const topicIds = new Set();
-  for (const topic of topics) topicIds.add(await catalogId(database, "topic", topic));
-  for (const topicId of topicIds) {
-    await database.execute("INSERT INTO sermon_topic_links (sermon_id, topic_id) VALUES (?, ?)", [sermonId, topicId]);
+  if (citations !== undefined) {
+    await database.execute("DELETE FROM sermon_scripture WHERE sermon_id=?", [sermonId]);
+    for (const [order, citation] of citations.entries()) {
+      await database.execute(`INSERT INTO sermon_scripture
+        (sermon_id, sort_order, book_slug, chapter_start, verse_start, chapter_end, verse_end, citation)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)`, [sermonId, order, ...citation]);
+    }
+  }
+
+  if (topics !== undefined) {
+    await database.execute("DELETE FROM sermon_topic_links WHERE sermon_id=?", [sermonId]);
+    const topicIds = new Set();
+    for (const topic of topics) topicIds.add(await catalogId(database, "topic", topic));
+    for (const topicId of topicIds) {
+      await database.execute("INSERT INTO sermon_topic_links (sermon_id, topic_id) VALUES (?, ?)", [sermonId, topicId]);
+    }
   }
 }
 

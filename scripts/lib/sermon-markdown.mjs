@@ -73,11 +73,17 @@ function parseFrontMatter(source) {
     if (name === "version") {
       version = isScalar(value) ? value.value : undefined;
     } else if (textFields.has(name)) {
-      if (value === null || (isScalar(value) && value.value === null)) continue;
-      if (!isScalar(value) || typeof value.value !== "string") throw new FormError(`Use text for the ${name} field.`);
-      values[textFields.get(name)] = value.value.trim();
+      if (value === null || (isScalar(value) && value.value === null)) {
+        values[textFields.get(name)] = "";
+      } else {
+        if (!isScalar(value) || typeof value.value !== "string") throw new FormError(`Use text for the ${name} field.`);
+        values[textFields.get(name)] = value.value.trim();
+      }
     } else if (listFields.has(name)) {
-      if (value === null || (isScalar(value) && value.value === null)) continue;
+      if (value === null || (isScalar(value) && (value.value === null || value.value === ""))) {
+        values[name] = "";
+        continue;
+      }
       if (!isSeq(value) || value.items.some(item => !isScalar(item) || typeof item.value !== "string" || /[\r\n]/.test(item.value))) {
         throw new FormError(`Use a list with one text value per line for ${name}.`);
       }
@@ -87,7 +93,6 @@ function parseFrontMatter(source) {
     }
   }
   if (version !== 1) throw new FormError("Include version: 1 in the Markdown fields.");
-  if (!values.slug && values.title) values.slug = slugify(values.title).slice(0, 180).replace(/-$/, "");
   return { values, hasBody: lines.slice(closing + 1).some(line => line.trim()) };
 }
 

@@ -6,17 +6,19 @@ import { createSermonAdmin, youtubeId } from "../scripts/lib/sermon-admin.mjs";
 const origin = "https://newlife-editor.hostingersite.com";
 const authorization = `Basic ${Buffer.from("editor:local-test-only").toString("base64")}`;
 
-function fixture() {
-  let sermon;
+function fixture({ existing, other, catalog } = {}) {
+  let sermon = existing && { ...existing };
   const events = [];
   const writes = [];
-  const names = {};
-  const scripture = [];
-  const topics = [];
+  const names = { ...catalog };
+  const scripture = catalog ? [{ citation: "Psalm 23" }] : [];
+  const topics = catalog ? [{ label: "Grace" }] : [];
   const changes = {
     async beginTransaction() {}, async commit() {}, async rollback() {}, release() {},
     async execute(sql, values) {
-      if (sql.startsWith("SELECT") && sql.includes("FOR UPDATE")) return [[sermon]];
+      if (sql.startsWith("SELECT") && sql.includes("FOR UPDATE")) {
+        return [[...[sermon, other].filter(row => row && (sql.includes("WHERE id=") ? row.id : row.slug) === values[0])]];
+      }
       if (sql.startsWith("UPDATE") && (sql.includes("'published'") || sql.includes("'withdrawn'"))) {
         sermon.state = sql.includes("'withdrawn'") ? "withdrawn" : "published";
         return [{ affectedRows: 1 }];
@@ -35,10 +37,11 @@ function fixture() {
         if (sql.includes("AS speaker")) return [[names]];
         if (sql.includes("FROM sermon_scripture")) return [scripture];
         if (sql.includes("FROM sermon_topic_links")) return [topics];
-        if (!sermon) return [[]];
         if (sql.includes("OR youtube_video_id")) {
-          return [values[0] === sermon.slug || values[1] === sermon.youtube_video_id ? [sermon] : []];
+          const [excluded, slug, video] = values;
+          return [[sermon, other].filter(row => row && row.id !== excluded && (row.slug === slug || row.youtube_video_id === video))];
         }
+        if (!sermon) return [[]];
         return [sql.includes("WHERE slug") ? values[0] === sermon.slug ? [sermon] : [] : [sermon]];
       }
       writes.push(sql);
@@ -53,8 +56,20 @@ function fixture() {
       if (sql.startsWith("INSERT INTO sermon_topics")) topics.push({ label: values[1] });
       if (sql.startsWith("DELETE FROM sermon_scripture")) scripture.length = 0;
       if (sql.startsWith("DELETE FROM sermon_topic_links")) topics.length = 0;
-      if (/^(?:INSERT INTO sermon_|DELETE FROM sermon_|UPDATE sermons SET speaker_id)/.test(sql)) {
+      if (/^(?:INSERT INTO sermon_|DELETE FROM sermon_)/.test(sql)) {
         return [{ affectedRows: 1, insertId: 30 + writes.length }];
+      }
+      if (sql.startsWith("UPDATE sermons SET") && sql.endsWith("WHERE id=?")) {
+        const columns = sql.slice("UPDATE sermons SET ".length, -" WHERE id=?".length).split(", ").map(column => column.slice(0, -2));
+        assert.equal(values.at(-1), sermon.id);
+        for (const [index, column] of columns.entries()) {
+          if (column === "speaker_id" || column === "series_id") {
+            if (values[index] === null) names[column.split("_")[0]] = null;
+          } else {
+            sermon[column] = values[index];
+          }
+        }
+        return [{ affectedRows: 1 }];
       }
       if (sql.includes("SET title") && ["draft", "in_review"].includes(sermon.state)) {
         const [title, youtube_video_id, summary, preached_on] = values;
@@ -96,7 +111,7 @@ function fixture() {
     });
     return result;
   }
-  return { request, events, writes, state: () => sermon?.state };
+  return { request, events, writes, state: () => sermon?.state, record: () => sermon };
 }
 
 const form = { title: "A <sermon>", slug: "a-sermon", video: "https://youtu.be/ZT8mUERsq5Q",
@@ -200,9 +215,87 @@ test("a Markdown file prefills an editable draft without writing, then Save draf
   assert.match(detail.body, /Scripture: John 3:16–18, Psalm 23/);
   assert.match(detail.body, /Topics: Grace/);
 
-  const duplicate = await request("/sermons/import", { method: "POST", upload: { text: markdown } });
-  assert.match(duplicate.body, /already uses this URL slug or YouTube video/);
+  const match = await request("/sermons/import", { method: "POST", upload: { text: markdown } });
+  assert.match(match.body, /Review changes to existing sermon/);
+  assert.match(match.body, /Update sermon/);
   assert.equal(state(), "draft");
+});
+
+const existing = {
+  id: 42, slug: "longstanding-message", youtube_video_id: "stagemd0001", title: "Existing title",
+  preached_on: "2026-11-22", summary: "Original summary", state: "published",
+  reviewed_by: "Earlier reviewer", reviewed_at: "2026-11-23 00:00:00",
+  published_at: "2026-11-24 00:00:00", created_at: "2026-11-22 00:00:00",
+};
+const catalog = { speaker: "Retained speaker", series: "Old series" };
+const makeUpload = (request, text) => request("/sermons/import", {
+  method: "POST", upload: { text: `---\nversion: 1\n${text}\n---\n` },
+});
+const tokenFrom = html => html.match(/name="preview" value="([^"]+)"/)?.[1];
+const confirm = (request, preview, confirmed = "yes") =>
+  request("/sermons/import/update", { method: "POST", fields: { preview, confirmed } });
+
+test("normalized YouTube matching previews and applies only confirmed changes to the existing row", async () => {
+  const { request, writes, record } = fixture({ existing, catalog });
+  const preview = await makeUpload(request,
+    'youtube_url: "https://youtu.be/stagemd0001?t=45"\nsummary: "Revised summary"\nseries:');
+  assert.equal(preview.status, 200);
+  assert.match(preview.body, /Existing value.*Imported value/s);
+  assert.match(preview.body, /<tr class="import-change"><th scope="row">Summary.*Original summary.*Revised summary/s);
+  assert.match(preview.body, /<tr class="import-change"><th scope="row">Series.*Old series.*Empty/s);
+  assert.match(preview.body, /Retained speaker.*Not supplied/s);
+  assert.doesNotMatch(preview.body, /<tr class="import-change"><th scope="row">YouTube video/);
+  assert.match(preview.body, /This sermon is published/);
+  assert.equal(writes.length, 0);
+  const token = tokenFrom(preview.body);
+  assert.ok(token);
+  assert.equal((await confirm(request, token, "no")).status, 422);
+  assert.equal(writes.length, 0);
+  const saved = await confirm(request, token);
+  assert.equal(saved.status, 303);
+  assert.equal(saved.headers.Location, "/sermons/longstanding-message?notice=imported");
+  assert.deepEqual(record(), { ...existing, summary: "Revised summary" });
+  assert.deepEqual(writes, ["UPDATE sermons SET summary=? WHERE id=?", "UPDATE sermons SET series_id=? WHERE id=?"]);
+  const page = await request(saved.headers.Location);
+  assert.match(page.body, /Existing sermon updated/);
+  assert.match(page.body, /Speaker: Retained speaker/);
+  assert.match(page.body, /Scripture: Psalm 23/);
+  assert.match(page.body, /Topics: Grace/);
+  assert.doesNotMatch(page.body, /Series: Old series/);
+  assert.equal((await confirm(request, token)).status, 409);
+});
+
+test("slug matching permits an unchanged or new YouTube ID and blocks mismatched identifiers", async () => {
+  const other = { ...existing, id: 43, slug: "other-message", youtube_video_id: "stagemd0002" };
+  const { request, writes, record } = fixture({ existing, other, catalog });
+  const conflict = await makeUpload(request, 'slug: LONGSTANDING-MESSAGE\nyoutube_url: "https://youtu.be/stagemd0002"');
+  assert.equal(conflict.status, 409);
+  assert.match(conflict.body, /matches one sermon.*other-message/s);
+  assert.equal(writes.length, 0);
+  assert.doesNotMatch(conflict.body, /Update sermon/);
+  const noChange = await makeUpload(request, 'slug: longstanding-message\nyoutube_url: "https://youtu.be/stagemd0001"');
+  assert.match(noChange.body, /No changes to save/);
+  assert.equal(tokenFrom(noChange.body), undefined);
+  const chosen = await makeUpload(request, 'slug: LONGSTANDING-MESSAGE\nyoutube_url: "https://youtu.be/stagemd0003"');
+  assert.match(chosen.body, /<tr class="import-change"><th scope="row">YouTube video/);
+  const saved = await confirm(request, tokenFrom(chosen.body));
+  assert.equal(saved.status, 303);
+  assert.equal(record().id, existing.id);
+  assert.equal(record().youtube_video_id, "stagemd0003");
+});
+
+test("an explicitly empty list clears it and an invalid or modified preview cannot write", async () => {
+  const { request, writes } = fixture({ existing, catalog });
+  const invalid = await makeUpload(request, "slug: longstanding-message\ntitle:");
+  assert.match(invalid.body, /Enter a title/);
+  assert.equal(tokenFrom(invalid.body), undefined);
+  const preview = await makeUpload(request, "slug: longstanding-message\ntopics: []");
+  const token = tokenFrom(preview.body);
+  assert.ok(token);
+  assert.equal((await confirm(request, (token[0] === "a" ? "b" : "a") + token.slice(1))).status, 422);
+  assert.equal(writes.length, 0);
+  assert.equal((await confirm(request, token)).status, 303);
+  assert.deepEqual(writes, ["DELETE FROM sermon_topic_links WHERE sermon_id=?"]);
 });
 
 test("Markdown import flags malformed uploads, unsupported fields, and missing values without writes", async () => {
