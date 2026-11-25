@@ -132,7 +132,8 @@ export function createSermonAdmin({ pool, origin, username, password, actor }) {
     res.setHeader("Cache-Control", "no-store");
     res.setHeader("X-Robots-Tag", "noindex, nofollow");
     res.setHeader("X-Content-Type-Options", "nosniff");
-    res.setHeader("Referrer-Policy", "no-referrer");
+    // Native form POSTs need an Origin header for the same-origin check below.
+    res.setHeader("Referrer-Policy", "same-origin");
     res.setHeader("Content-Security-Policy", "default-src 'none'; style-src 'unsafe-inline'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'");
     res.setHeader("Content-Type", "text/html; charset=utf-8");
     const send = (code, body) => res.writeHead(code).end(body);

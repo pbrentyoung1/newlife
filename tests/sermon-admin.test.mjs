@@ -75,7 +75,10 @@ test("authentication and same-origin checks run before any draft writes", async 
   assert.equal(anonymous.status, 401);
   assert.match(anonymous.headers["WWW-Authenticate"], /^Basic /);
   assert.equal(anonymous.headers["Cache-Control"], "no-store");
+  const editor = await request("/");
+  assert.equal(editor.headers["Referrer-Policy"], "same-origin");
   assert.equal((await request("/sermons", { method: "POST", fields: form, requestOrigin: "https://other.example" })).status, 403);
+  assert.equal((await request("/sermons", { method: "POST", fields: form, requestOrigin: "null" })).status, 403);
   assert.equal((await request("/sermons/a-sermon/publish")).status, 404);
   assert.equal(writes.length, 0);
 });
